@@ -5,7 +5,9 @@ export function createProgram(): Command {
 
   program
     .name('meta-composer')
-    .description('CLI tool for meta composition')
+    .description(
+      'A tool for composing and traversing arbitrary information. Possibly the worst named tool mankind will ever know.',
+    )
     .version('0.1.0')
 
   // Customize help to show commands in desired format
