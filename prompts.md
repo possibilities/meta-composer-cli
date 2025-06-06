@@ -139,3 +139,22 @@ The show command currently does nothing. The list command shows a list of shadcn
 Now we will read from that cache to return a meaningful response when calling the `meta-composer shadcn show` command
 
 We originally implemented all of this in a python project that you can read here: ~/code/docs/ui-composer-mcp.xml. You can read the source, specifically the file ./ui_composer_mcp/server.py and the function ui_show_component_details, to learn how to work with the cached data and return the expected response. Implement it to work identically to ~/code/docs/ui-composer-mcp.xml. and return the equivelent string when the `meta-composer shadcn show` command is called.
+
+## 11
+
+Help fix some issues, mostly related to the show command we recently implemented.
+
+The help command look like this:
+
+list shadcn List shadcns
+show shadcn Show shadcns
+
+But they should look like this:
+
+list shadcn core List shadcn core
+show shadcn core <name> Show shadcn core
+
+Notice that the category and name are required positional arguments.
+Right now you provide a name without the category and it works but it should not work. Items are always shown are in the context of a category.
+
+Also the show command should throw an error if the cache is empty, it shouldn't try to warm it.

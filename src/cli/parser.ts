@@ -13,11 +13,20 @@ export function createProgram(): Command {
   // Customize help to show commands in desired format
   program.configureHelp({
     subcommandTerm: cmd => {
-      // For list and show commands, display with their subcommands
-      if (cmd.name() === 'list' || cmd.name() === 'show') {
-        const subcommands = cmd.commands.map(subcmd => subcmd.name()).join(', ')
-        if (subcommands) {
-          return `${cmd.name()} ${subcommands}`
+      // For list and show commands, display with usage info
+      if (cmd.name() === 'list') {
+        const shadcnCmd = cmd.commands.find(
+          subcmd => subcmd.name() === 'shadcn',
+        )
+        if (shadcnCmd) {
+          return `list shadcn core`
+        }
+      } else if (cmd.name() === 'show') {
+        const shadcnCmd = cmd.commands.find(
+          subcmd => subcmd.name() === 'shadcn',
+        )
+        if (shadcnCmd) {
+          return `show shadcn core <name>`
         }
       }
       return cmd.name()
