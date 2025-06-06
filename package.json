@@ -1,0 +1,28 @@
+{
+  "name": "meta-composer",
+  "version": "0.1.0",
+  "author": "Mike Bannister <notimpossiblemike@gmail.com>",
+  "license": "MIT",
+  "description": "A CLI tool for composing arbitrary information. Possibly the worst named utility.",
+  "type": "module",
+  "bin": {
+    "meta-composer": "./dist/cli.js"
+  },
+  "scripts": {
+    "build": "tsup",
+    "build:watch": "tsup --watch",
+    "format": "prettier --write \"**/*.{js,mjs,jsx,ts,tsx,json,md,mdx,css,yml,yaml}\""
+  },
+  "dependencies": {
+    "commander": "^12.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "prettier": "^3.5.3",
+    "tsup": "^8.0.0",
+    "typescript": "^5.0.0"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
