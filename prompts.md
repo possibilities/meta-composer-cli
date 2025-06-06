@@ -168,3 +168,11 @@ meta-composer list shadcn core x y z
 ## 12.1
 
 It **should** return an error when there are extra arguments beyond what is expected.
+
+## 13
+
+Everywhere that we refer to a "name" regarding shadcn items we should call it "id".
+
+That means that when we build the cache we should bake "id" instead of "name" if applicable.
+
+Look for documentation, comments, and code and ensure everything is properly renamed.

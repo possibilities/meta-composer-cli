@@ -26,7 +26,7 @@ export function createProgram(): Command {
           subcmd => subcmd.name() === 'shadcn',
         )
         if (shadcnCmd) {
-          return `show shadcn core <name>`
+          return `show shadcn core <id>`
         }
       }
       return cmd.name()
