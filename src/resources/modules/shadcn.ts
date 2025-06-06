@@ -10,6 +10,7 @@ import {
 import { join, dirname } from 'path'
 import { homedir } from 'os'
 import * as yaml from 'js-yaml'
+import { Command } from 'commander'
 
 interface ShadcnComponent {
   name: string
@@ -390,14 +391,54 @@ export class ShadcnResource extends BaseResourceModule {
     )
   }
 
-  async show(...ids: string[]): Promise<any[]> {
+  async show(...ids: string[]): Promise<string> {
+    this.ensureCacheDirectory()
+
     if (!this.isCacheWarmed()) {
-      throw new Error(
-        'Cache is not warmed. Please run "list shadcn <category>" first to warm the cache.',
-      )
+      console.log('Cache is not warmed. Warming cache now...')
+      this.warmCache()
     }
 
-    // Return empty array for now - business logic to be implemented later
-    return []
+    // For shadcn, we only support showing one component at a time
+    const name = ids[0].toLowerCase().trim()
+    const filePath = join(this.processedDir, `${name}.mdx`)
+
+    if (existsSync(filePath)) {
+      const content = readFileSync(filePath, 'utf-8')
+      return content
+    } else {
+      return `Component or block '${name}' not found`
+    }
+  }
+
+  registerCommands(program: Command): void {
+    // Call parent implementation to register list command
+    super.registerCommands(program)
+
+    // Override the show command for shadcn to output as string
+    let showCmd = program.commands.find(cmd => cmd.name() === 'show')
+    if (showCmd) {
+      // Remove the default shadcn show command
+      const shadcnShowIndex = showCmd.commands.findIndex(
+        cmd => cmd.name() === this.name,
+      )
+      if (shadcnShowIndex !== -1) {
+        showCmd.commands.splice(shadcnShowIndex, 1)
+      }
+
+      // Add custom shadcn show command
+      showCmd
+        .command(`${this.name} <component>`)
+        .description(`Show detailed documentation for a shadcn component`)
+        .action(async (component: string) => {
+          try {
+            const result = await this.show(component)
+            console.log(result)
+          } catch (error) {
+            console.error(`Error showing ${this.name}:`, error)
+            process.exit(1)
+          }
+        })
+    }
   }
 }
