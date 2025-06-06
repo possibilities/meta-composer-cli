@@ -227,3 +227,50 @@ Let's not return any trailing/leading whitespace in either command if we current
 ## 17 [human]
 
 Added autocil config
+
+## 18
+
+In the shadcn core list output rather than a textual id, use an incrementing decimal starting with 1.
+
+Now we have:
+
+```
+- id: accordion
+  title: Accordion
+  description: >-
+    A vertically stacked set of interactive headings that each reveal a section
+    of content.
+- id: alert
+  title: Alert
+```
+
+The new output should be:
+
+```
+- id: 1
+  title: Accordion
+  description: >-
+    A vertically stacked set of interactive headings that each reveal a section
+    of content.
+- id: 2
+  title: Alert
+  [...snip...]
+```
+
+## 18.1
+
+The show command has to be updated to use the number rather than the nam
+
+## 18.2
+
+It appears to only return a small amount of the content now. The output ends abruptly:
+
+```
+▶ ./dist/cli.js show shadcn core 3
+# Alert Dialog
+A modal dialog that interrupts the user with important content and expects a response.
+## Demo
+<ComponentPreview
+```
+
+Run the command directly to see the output while you work on fixing it.

@@ -237,7 +237,7 @@ export class ShadcnResource extends BaseResourceModule {
       }
 
       // Remove frontmatter
-      const mainContentMatch = content.match(/---[\s\S]*?---\s*(.*)/)
+      const mainContentMatch = content.match(/---[\s\S]*?---\s*([\s\S]*)/)
       const mainContent = mainContentMatch ? mainContentMatch[1] : content
 
       // Create header
@@ -372,11 +372,15 @@ export class ShadcnResource extends BaseResourceModule {
     // Sort components by id for consistent output
     components.sort((a, b) => a.id.localeCompare(b.id))
 
-    // Convert components to properly formatted YAML
-    const componentsYaml = components.map(comp => {
-      const formatted: any = { ...comp }
-      if (formatted.examples) {
-        formatted.examples = formatted.examples.map((ex: any) => ex.toString())
+    // Convert components to properly formatted YAML with incrementing IDs
+    const componentsYaml = components.map((comp, index) => {
+      const formatted: any = {
+        id: index + 1,
+        title: comp.title,
+        description: comp.description,
+      }
+      if (comp.examples) {
+        formatted.examples = comp.examples.map((ex: any) => ex.toString())
       }
       return formatted
     })
@@ -400,15 +404,43 @@ export class ShadcnResource extends BaseResourceModule {
       )
     }
 
-    // For shadcn, we show the component documentation
-    const componentId = id.toLowerCase().trim()
+    // Parse numeric ID
+    const numericId = parseInt(id, 10)
+    if (isNaN(numericId) || numericId < 1) {
+      return `Invalid ID '${id}'. Please provide a valid numeric ID.`
+    }
+
+    // Load all components to map numeric ID to component name
+    const components: ShadcnComponent[] = []
+    const files = readdirSync(this.metadataDir).filter(f => f.endsWith('.yaml'))
+
+    for (const filename of files) {
+      const filePath = join(this.metadataDir, filename)
+      const fileContent = readFileSync(filePath, 'utf-8')
+      const componentData = yaml.load(fileContent) as ShadcnComponent
+      components.push(componentData)
+    }
+
+    // Sort components by id for consistent mapping
+    components.sort((a, b) => a.id.localeCompare(b.id))
+
+    // Find component by numeric index
+    const componentIndex = numericId - 1
+    if (componentIndex >= components.length) {
+      return `Component with ID '${id}' not found. Valid IDs are 1-${components.length}.`
+    }
+
+    const component = components[componentIndex]
+    const componentId = component.id
+
+    // Show the component documentation
     const filePath = join(this.processedDir, `${componentId}.mdx`)
 
     if (existsSync(filePath)) {
       const content = readFileSync(filePath, 'utf-8')
       return content.trim()
     } else {
-      return `Component or block '${componentId}' not found in category '${category}'`
+      return `Component documentation for '${componentId}' not found`
     }
   }
 
