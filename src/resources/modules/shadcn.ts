@@ -13,11 +13,11 @@ import * as yaml from 'js-yaml'
 import { Command } from 'commander'
 
 interface ShadcnComponent {
-  name: string
+  id: string
   title?: string
   description?: string
   examples?: Array<{
-    name?: string
+    id?: string
     label?: string
     description?: string
     [key: string]: string | undefined
@@ -88,10 +88,10 @@ export class ShadcnResource extends BaseResourceModule {
 
     for (const filename of files) {
       const filePath = join(srcDocsPath, filename)
-      const componentName = filename.replace('.mdx', '')
+      const componentId = filename.replace('.mdx', '')
 
       const content = readFileSync(filePath, 'utf-8')
-      const metadata: ShadcnComponent = { name: componentName }
+      const metadata: ShadcnComponent = { id: componentId }
 
       // Extract frontmatter
       const frontmatterMatch = content.match(/^---\s*([\s\S]*?)\s*---/)
@@ -105,14 +105,14 @@ export class ShadcnResource extends BaseResourceModule {
         if (titleMatch) {
           metadata.title = titleMatch[1].trim()
         } else {
-          metadata.title = componentName
+          metadata.title = componentId
         }
 
         if (descriptionMatch) {
           metadata.description = descriptionMatch[1].trim()
         }
       } else {
-        metadata.title = componentName
+        metadata.title = componentId
       }
 
       // Extract examples
@@ -185,7 +185,7 @@ export class ShadcnResource extends BaseResourceModule {
       }
 
       // Write metadata to YAML file
-      const outputPath = join(this.metadataDir, `${componentName}.yaml`)
+      const outputPath = join(this.metadataDir, `${componentId}.yaml`)
       writeFileSync(outputPath, yaml.dump(metadata, { sortKeys: false }))
       console.log(`Extracted metadata from ${filename}`)
     }
@@ -212,12 +212,12 @@ export class ShadcnResource extends BaseResourceModule {
 
     for (const filename of files) {
       const filePath = join(srcDocsPath, filename)
-      const componentName = filename.replace('.mdx', '')
+      const componentId = filename.replace('.mdx', '')
 
       let content = readFileSync(filePath, 'utf-8')
 
       // Extract frontmatter for title and description
-      let title = componentName.charAt(0).toUpperCase() + componentName.slice(1)
+      let title = componentId.charAt(0).toUpperCase() + componentId.slice(1)
       let description = ''
 
       const frontmatterMatch = content.match(/^---\s*([\s\S]*?)\s*---/)
@@ -250,7 +250,7 @@ export class ShadcnResource extends BaseResourceModule {
       // Replace installation section
       let processedContent = mainContent.replace(
         /## Installation\s*?\n.*?(?=\n## )/s,
-        `## Installation\n\`\`\`\nnpx shadcn@latest add ${componentName}\n\`\`\`\n`,
+        `## Installation\n\`\`\`\nnpx shadcn@latest add ${componentId}\n\`\`\`\n`,
       )
 
       // Process ComponentPreview tags
@@ -264,7 +264,7 @@ export class ShadcnResource extends BaseResourceModule {
             /description=(["'])((?:(?=(\\?))\3.)*?)\1/,
           )
 
-          const name = nameMatch ? nameMatch[2] : null
+          const id = nameMatch ? nameMatch[2] : null
           const previewTitle = titleMatch ? titleMatch[2] : null
           const previewDescription = descriptionMatch
             ? descriptionMatch[2]
@@ -280,8 +280,8 @@ export class ShadcnResource extends BaseResourceModule {
           }
 
           let exampleContent = ''
-          if (name) {
-            const exampleFilePath = join(srcExamplesPath, `${name}.tsx`)
+          if (id) {
+            const exampleFilePath = join(srcExamplesPath, `${id}.tsx`)
             if (existsSync(exampleFilePath)) {
               exampleContent = readFileSync(exampleFilePath, 'utf-8')
             }
@@ -318,15 +318,15 @@ export class ShadcnResource extends BaseResourceModule {
       return `${example.label}: ${example.description}`
     }
     if (example.label) {
-      const name = example.name || ''
-      return `${example.label}: ${name.charAt(0).toUpperCase()}${name.slice(1).replace(/-/g, ' ')}`
+      const id = example.id || ''
+      return `${example.label}: ${id.charAt(0).toUpperCase()}${id.slice(1).replace(/-/g, ' ')}`
     }
     if (example.description) {
-      const name = example.name || ''
-      return `${example.description}: ${name.charAt(0).toUpperCase()}${name.slice(1).replace(/-/g, ' ')}`
+      const id = example.id || ''
+      return `${example.description}: ${id.charAt(0).toUpperCase()}${id.slice(1).replace(/-/g, ' ')}`
     }
-    const name = example.name || ''
-    return name
+    const id = example.id || ''
+    return id
       .split('-')
       .map(word => word.charAt(0).toUpperCase() + word.slice(1))
       .join(' ')
@@ -353,7 +353,7 @@ export class ShadcnResource extends BaseResourceModule {
 - Build up more complicated components from existing components, blocks, and examples
 - If you are using a component that has a corresponding example, use the example as a guide to create your own component
 - Use the 'typography' component documentation for many example to help make decisions about typography
-- Use the name of the component or block to get detailed information with the \`ui_show_component_details\` tool:
+- Use the id of the component or block to get detailed information with the \`ui_show_component_details\` tool:
     - Full component documention will be returned
     - Use the \`npx\` command under "Installation" to install a component, add the --force flag for react 19
     - Look at the "Usage" and "Examples" sections for examples of how to use the component
@@ -381,8 +381,8 @@ export class ShadcnResource extends BaseResourceModule {
       components.push(componentData)
     }
 
-    // Sort components by name for consistent output
-    components.sort((a, b) => a.name.localeCompare(b.name))
+    // Sort components by id for consistent output
+    components.sort((a, b) => a.id.localeCompare(b.id))
 
     // Convert components to properly formatted YAML
     const componentsYaml = components.map(comp => {
@@ -398,7 +398,7 @@ export class ShadcnResource extends BaseResourceModule {
     )
   }
 
-  async show(category: string, name: string): Promise<string> {
+  async show(category: string, id: string): Promise<string> {
     this.ensureCacheDirectory()
 
     if (!this.isCacheWarmed()) {
@@ -415,14 +415,14 @@ export class ShadcnResource extends BaseResourceModule {
     }
 
     // For shadcn, we show the component documentation
-    const componentName = name.toLowerCase().trim()
-    const filePath = join(this.processedDir, `${componentName}.mdx`)
+    const componentId = id.toLowerCase().trim()
+    const filePath = join(this.processedDir, `${componentId}.mdx`)
 
     if (existsSync(filePath)) {
       const content = readFileSync(filePath, 'utf-8')
       return content
     } else {
-      return `Component or block '${componentName}' not found in category '${category}'`
+      return `Component or block '${componentId}' not found in category '${category}'`
     }
   }
 
@@ -460,12 +460,12 @@ export class ShadcnResource extends BaseResourceModule {
 
     // Add shadcn show subcommand with category and name
     showCmd
-      .command(`${this.name} <category> <name>`)
+      .command(`${this.name} <category> <id>`)
       .description(`Show ${this.name} core`)
       .allowExcessArguments(false)
-      .action(async (category: string, name: string) => {
+      .action(async (category: string, id: string) => {
         try {
-          const result = await this.show(category, name)
+          const result = await this.show(category, id)
           console.log(result)
         } catch (error) {
           console.error(`Error showing ${this.name}:`, error)
