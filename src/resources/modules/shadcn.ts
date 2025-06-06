@@ -40,6 +40,7 @@ export class ShadcnResource extends BaseResourceModule {
       'cache',
       'resources',
       'shadcn',
+      'core',
     )
     this.repoDir = join(this.cacheDir, 'shadcn-ui-repo')
     this.metadataDir = join(this.cacheDir, 'shadcn-ui-docs-metadata')
