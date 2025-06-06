@@ -20,3 +20,7 @@ Handlers for the commands, configuration for the subcommands and flags
 Don't write any code. Each handler should only print out all the information it has, which will only be things like the command and arguments provided. Essentially each command should echo its input.
 
 Let's make a plan.
+
+## 2
+
+Let's not use the name "type" in the CLI, instead call it "category". Update everywhere.

@@ -13,17 +13,17 @@ export function createProgram(): Command {
     .version('0.1.0')
 
   program
-    .command('build <resource> <type>')
-    .description('Build a resource of a specific type')
-    .action((resource: string, type: string) => {
-      handleBuild(resource, type, { resource, type })
+    .command('build <resource> <category>')
+    .description('Build a resource of a specific category')
+    .action((resource: string, category: string) => {
+      handleBuild(resource, category, { resource, category })
     })
 
   program
-    .command('list <resource> <type>')
-    .description('List resources of a specific type')
-    .action((resource: string, type: string) => {
-      handleList(resource, type, { resource, type })
+    .command('list <resource> <category>')
+    .description('List resources of a specific category')
+    .action((resource: string, category: string) => {
+      handleList(resource, category, { resource, category })
     })
 
   program

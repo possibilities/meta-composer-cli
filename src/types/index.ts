@@ -1,11 +1,11 @@
 export interface BuildOptions {
   resource: string
-  type: string
+  category: string
 }
 
 export interface ListOptions {
   resource: string
-  type: string
+  category: string
 }
 
 export interface PeekOptions {
