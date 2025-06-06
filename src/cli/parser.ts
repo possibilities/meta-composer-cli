@@ -1,6 +1,5 @@
 import { Command } from 'commander'
 import { handleList } from './commands/list.js'
-import { handlePeek } from './commands/peek.js'
 import { handleShow } from './commands/show.js'
 
 export function createProgram(): Command {
@@ -16,13 +15,6 @@ export function createProgram(): Command {
     .description('List resources of a specific category')
     .action((resource: string, category: string) => {
       handleList(resource, category, { resource, category })
-    })
-
-  program
-    .command('peek <resource> <id...>')
-    .description('Peek at one or more resources by ID')
-    .action((resource: string, ids: string[]) => {
-      handlePeek(resource, ids, { resource, ids })
     })
 
   program

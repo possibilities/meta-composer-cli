@@ -48,3 +48,7 @@ The signature for the functions in these modules should mirror the subcommand. F
 - etc
 
 Make a plan.
+
+## 5
+
+Remove `peek` subcommand from the project

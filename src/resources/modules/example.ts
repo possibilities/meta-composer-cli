@@ -43,15 +43,6 @@ export class ExampleResource extends BaseResourceModule {
     return this.items.filter(item => item.category === category)
   }
 
-  async peek(
-    ...ids: string[]
-  ): Promise<{ id: string; name: string; category: string }[]> {
-    return ids
-      .map(id => this.items.find(item => item.id === id))
-      .filter((item): item is ExampleItem => item !== undefined)
-      .map(({ id, name, category }) => ({ id, name, category }))
-  }
-
   async show(...ids: string[]): Promise<ExampleItem[]> {
     return ids
       .map(id => this.items.find(item => item.id === id))
