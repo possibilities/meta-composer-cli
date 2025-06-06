@@ -29,7 +29,11 @@ export abstract class BaseResourceModule implements ResourceModule {
       .action(async (category: string) => {
         try {
           const results = await this.list(category)
-          console.log(JSON.stringify(results, null, 2))
+          if (typeof results === 'string') {
+            console.log(results)
+          } else {
+            console.log(JSON.stringify(results, null, 2))
+          }
         } catch (error) {
           console.error(`Error listing ${this.name}:`, error)
           process.exit(1)
