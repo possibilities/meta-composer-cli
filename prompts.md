@@ -125,3 +125,7 @@ The list command alrady does the work to warm a file cache
 Now we will read from that cache to return a meaningful response when calling the `meta-composer shadcn list` command
 
 We originally implemented all of this in a python project that you can read here: ~/code/docs/ui-composer-mcp.xml. You can read the source, specifically the file ./ui_composer_mcp/server.py and the function ui_show_component_details, to learn how to work with the cached data and return the expected response. Implement it to work identically and return the equivelent string when the `meta-composer shadcn list` command is called.
+
+## 9
+
+Remove the example command
