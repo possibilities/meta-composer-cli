@@ -355,3 +355,74 @@ Also, when we made the shadcn resource we placed the cache in this directory:
 For consistency we should place it in ~/.meta-composer/cache/resources/shadcn/core Don't worry about backwards compatibility. I'll delete the old cache now and we can create a new one after the feature is complete.
 
 Ignore all of the shadcn related code in ~/code/docs/ui-composer-mcp.xml and only concentrate on the lucid related code.
+
+## 21
+
+`list icons lucid` Returns a huge amount of information because of the denormalized nature of the records.
+
+▶ ./dist/cli.js list icons lucid| head -n 30
+
+- name: a-arrow-down
+  tags:
+  - letter
+  - font size
+  - text
+  - formatting
+  - smaller
+    categories:
+  - text
+  - design
+- name: a-arrow-up
+  tags:
+  - letter
+  - font size
+  - text
+  - formatting
+  - larger
+  - bigger
+    categories:
+  - text
+  - design
+- name: a-large-small
+  tags:
+  - letter
+  - font size
+  - text
+  - formatting
+    categories:
+  - text
+  - design
+
+Instead we want to require an additional required positional argument called <type> that can be icons, tags, or categories
+
+Then the output for each will be only a single list of unix items of that type
+
+For example `meta-composer list icons lucid icons`:
+
+- a-arrow-down
+- a-arrow-up
+  [...snip...]
+
+For example `meta-composer list icons lucid tags`:
+
+- letter
+- font size
+  [...snip...]
+
+For example `meta-composer list icons lucid categories`:
+
+- text
+- design
+  [...snip...]
+
+## 21.1 [plan mode]
+
+Great for anything schema or validation related, where it makes sense, use zod (use context7)
+
+## 21.2 [plan mode]
+
+Always use `pnpm add` to add new dependencies
+
+## 22.3 [plan mode]
+
+Before we go ahead an execute the plan I'm wondering if you see other places we should be using zod. Asking for the purpose only to revisit it later, so please let me know but don't add it to the current plan we're about to execute.

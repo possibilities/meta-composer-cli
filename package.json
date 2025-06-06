@@ -15,7 +15,8 @@
   },
   "dependencies": {
     "commander": "^12.0.0",
-    "js-yaml": "^4.1.0"
+    "js-yaml": "^4.1.0",
+    "zod": "^3.25.56"
   },
   "devDependencies": {
     "@types/js-yaml": "^4.0.9",

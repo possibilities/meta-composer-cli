@@ -11,6 +11,11 @@ import { join } from 'path'
 import { homedir } from 'os'
 import * as yaml from 'js-yaml'
 import { Command } from 'commander'
+import { z } from 'zod'
+
+// Define the type enum schema
+const IconListTypeSchema = z.enum(['icons', 'tags', 'categories'])
+type IconListType = z.infer<typeof IconListTypeSchema>
 
 interface IconMetadata {
   name: string
@@ -124,7 +129,7 @@ export class IconsResource extends BaseResourceModule {
     console.log('Cache warming completed')
   }
 
-  async list(category: string): Promise<string> {
+  async list(category: string, type: IconListType): Promise<string> {
     this.ensureCacheDirectory()
 
     // Validate category
@@ -139,8 +144,40 @@ export class IconsResource extends BaseResourceModule {
       this.warmCache()
     }
 
-    // Return empty for now as per requirements
-    return ''
+    // Load metadata
+    const yamlContent = readFileSync(
+      join(this.metadataDir, 'icons.yaml'),
+      'utf-8',
+    )
+    const iconsData = yaml.load(yamlContent) as IconMetadata[]
+
+    // Extract based on type
+    switch (type) {
+      case 'icons':
+        return iconsData.map(icon => `- ${icon.name}`).join('\n')
+
+      case 'tags': {
+        const tags = new Set<string>()
+        iconsData.forEach(icon => {
+          icon.tags?.forEach(tag => tags.add(tag))
+        })
+        return Array.from(tags)
+          .sort()
+          .map(tag => `- ${tag}`)
+          .join('\n')
+      }
+
+      case 'categories': {
+        const categories = new Set<string>()
+        iconsData.forEach(icon => {
+          icon.categories?.forEach(cat => categories.add(cat))
+        })
+        return Array.from(categories)
+          .sort()
+          .map(cat => `- ${cat}`)
+          .join('\n')
+      }
+    }
   }
 
   async show(category: string, id: string): Promise<string> {
@@ -172,19 +209,27 @@ export class IconsResource extends BaseResourceModule {
       program.addCommand(listCmd)
     }
 
-    // Add icons list subcommand with category
+    // Add icons list subcommand with category and type
     listCmd
-      .command(`${this.name} <category>`)
-      .description(`List ${this.name} lucid`)
+      .command(`${this.name} <category> <type>`)
+      .description(`List ${this.name} lucid (type: icons, tags, or categories)`)
       .allowExcessArguments(false)
-      .action(async (category: string) => {
+      .action(async (category: string, type: string) => {
         try {
-          const results = await this.list(category)
+          // Validate type using Zod
+          const validatedType = IconListTypeSchema.parse(type)
+          const results = await this.list(category, validatedType)
           if (results) {
             console.log(results)
           }
         } catch (error) {
-          console.error(`Error listing ${this.name}:`, error)
+          if (error instanceof z.ZodError) {
+            console.error(
+              `Error: Invalid type '${type}'. Must be one of: icons, tags, categories`,
+            )
+          } else {
+            console.error(`Error listing ${this.name}:`, error)
+          }
           process.exit(1)
         }
       })

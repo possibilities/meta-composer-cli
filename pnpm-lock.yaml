@@ -13,6 +13,9 @@ importers:
       js-yaml:
         specifier: ^4.1.0
         version: 4.1.0
+      zod:
+        specifier: ^3.25.56
+        version: 3.25.56
     devDependencies:
       '@types/js-yaml':
         specifier: ^4.0.9
@@ -1093,6 +1096,12 @@ packages:
       }
     engines: { node: '>=12' }
 
+  zod@3.25.56:
+    resolution:
+      {
+        integrity: sha512-rd6eEF3BTNvQnR2e2wwolfTmUTnp70aUTqr0oaGbHifzC3BKJsoV+Gat8vxUMR1hwOKBs6El+qWehrHbCpW6SQ==,
+      }
+
 snapshots:
   '@esbuild/aix-ppc64@0.25.5':
     optional: true
@@ -1619,3 +1628,5 @@ snapshots:
       ansi-styles: 6.2.1
       string-width: 5.1.2
       strip-ansi: 7.1.0
+
+  zod@3.25.56: {}
