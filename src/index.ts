@@ -1,6 +1,11 @@
 import { createProgram } from './cli/parser.js'
+import { registry } from './resources/index.js'
+import { ExampleResource } from './resources/modules/example.js'
 
 export async function main() {
+  // Register available resources
+  registry.register(new ExampleResource())
+
   const program = createProgram()
 
   try {
