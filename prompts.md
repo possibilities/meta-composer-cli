@@ -355,3 +355,21 @@ Also, when we made the shadcn resource we placed the cache in this directory:
 For consistency we should place it in ~/.meta-composer/cache/resources/shadcn/core Don't worry about backwards compatibility. I'll delete the old cache now and we can create a new one after the feature is complete.
 
 Ignore all of the shadcn related code in ~/code/docs/ui-composer-mcp.xml and only concentrate on the lucid related code.
+
+## 21 [plan mode]
+
+Implement `meta-composer list icons` command
+
+The list command already does the work to warm a file cache
+
+Now we will read from that cache to return a meaningful response when calling the `meta-composer list icons` command
+
+We originally implemented all of this in a python project that you can read here: ~/code/docs/ui-composer-mcp.xml. You can read the source, specifically the file ./ui_composer_mcp/server.py and the function ui_list_icons, to learn how to work with the cached data and return the expected response. Implement it to work identically and return the equivalent string when the `meta-composer list icons` command is called.
+
+## 21.1 [plan mode]
+
+Show an example of icons.yaml from the metadata direcotry compared to the output from the python implementation?
+
+## 22.2 [plan mode]
+
+Instead of trying to worry about getting it perfect right now let's return the content of icons.yaml as-is for now

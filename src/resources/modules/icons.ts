@@ -139,8 +139,11 @@ export class IconsResource extends BaseResourceModule {
       this.warmCache()
     }
 
-    // Return empty for now as per requirements
-    return ''
+    // Read and return the cached icons.yaml file content
+    const iconsPath = join(this.metadataDir, 'icons.yaml')
+    const iconsData = readFileSync(iconsPath, 'utf-8')
+
+    return iconsData
   }
 
   async show(category: string, id: string): Promise<string> {
