@@ -186,3 +186,28 @@ When I run:
 I see the correct --help output but it is followed by this.
 
 Error: (outputHelp)
+
+## 15
+
+Fix:
+
+▶ ./dist/cli.js list shadcn core
+Error listing shadcn: TypeError: Cannot read properties of undefined (reading 'localeCompare')
+at file:///home/mike/code/worktrees/meta-composer-cli-worktree-010/dist/cli.js:394:36
+at Array.sort (<anonymous>)
+at ShadcnResource.list (file:///home/mike/code/worktrees/meta-composer-cli-worktree-010/dist/cli.js:394:16)
+at Command.<anonymous> (file:///home/mike/code/worktrees/meta-composer-cli-worktree-010/dist/cli.js:434:36)
+at Command.listener [as _actionHandler] (/home/mike/code/worktrees/meta-composer-cli-worktree-010/node_modules/.pnpm/commander@12.1.0/node_modules/commander/lib/command.js:542:17)
+at /home/mike/code/worktrees/meta-composer-cli-worktree-010/node_modules/.pnpm/commander@12.1.0/node_modules/commander/lib/command.js:1502:14
+at Command.\_chainOrCall (/home/mike/code/worktrees/meta-composer-cli-worktree-010/node_modules/.pnpm/commander@12.1.0/node_modules/commander/lib/command.js:1386:12)
+at Command.\_parseCommand (/home/mike/code/worktrees/meta-composer-cli-worktree-010/node_modules/.pnpm/commander@12.1.0/node_modules/commander/lib/command.js:1501:27)
+at /home/mike/code/worktrees/meta-composer-cli-worktree-010/node_modules/.pnpm/commander@12.1.0/node_modules/commander/lib/command.js:1265:27
+at Command.\_chainOrCall (/home/mike/code/worktrees/meta-composer-cli-worktree-010/node_modules/.pnpm/commander@12.1.0/node_modules/commander/lib/command.js:1386:12)
+
+## 15.1 [interrupt]
+
+I think we need to regenerate the cache.
+
+I deleted it.
+
+Try again, and continue.
