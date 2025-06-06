@@ -274,3 +274,58 @@ A modal dialog that interrupts the user with important content and expects a res
 ```
 
 Run the command directly to see the output while you work on fixing it.
+
+## 19
+
+Add a new module `meta-composer list openapi <uri>` and `meta-composer show openapi <uri>`
+
+Unlike the `shadcn` module there is no caching involved.
+
+Unlike the `shadcn` command which has a single hardcoded "category" this one has takes a dynamic <uri>.
+
+For `list` treat the URI as a fetchable JSON endpoint that will return an openapi json spec. Show a list of the verbs, names, and descriptions, assigning each a numeric ID. Follow the list format of `shadcn core` as much as it makes sense.
+
+For `show` return all the details about the endpoint requested in a compact markdown format
+
+## 19.2
+
+I'm not seeing it when I run --help. Should I?
+
+## 19.3
+
+It's not looking good:
+
+```
+Commands:
+  list shadcn core
+         list openapi <uri>            List resources
+  show shadcn core <id>
+         show openapi <uri> <id>  Show resources
+  help                                                  display help for command
+```
+
+## 19.4
+
+That's actually a lot better. Good idea.
+
+Problem I see is that only shadcn shows for both list --help and show --help:
+
+```
+▶ meta-composer show --help
+Usage: meta-composer show [options] [command]
+
+Options:
+  -h, --help              display help for command
+
+Commands:
+  shadcn <category> <id>  Show shadcn core
+  help [command]          display help for command
+```
+
+## 19.5
+
+Add a list of installed modules on the main help screen? i.e. shadcn, and openapi
+
+## 19.6
+
+Let's move them to live just below the description

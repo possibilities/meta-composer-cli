@@ -1,10 +1,12 @@
 import { createProgram } from './cli/parser.js'
 import { registry } from './resources/index.js'
 import { ShadcnResource } from './resources/modules/shadcn.js'
+import { OpenAPIResource } from './resources/modules/openapi.js'
 
 export async function main() {
   // Register available resources
   registry.register(new ShadcnResource())
+  registry.register(new OpenAPIResource())
 
   const program = createProgram()
 
