@@ -211,3 +211,15 @@ I think we need to regenerate the cache.
 I deleted it.
 
 Try again, and continue.
+
+## 16
+
+There is a bunch of output in the list command for shadcn that is a holdover from a previous project and now we want to get rid of it.
+
+Please remove the "Instructions" hardcoded text preamble along with the heading "Components"
+
+## 16.1
+
+Is there anything that's being prepended/appended to the list output or show output that we might want to trim?
+
+Let's not return any trailing/leading whitespace in either command if we currently are.
