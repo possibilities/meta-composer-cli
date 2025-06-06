@@ -439,6 +439,7 @@ export class ShadcnResource extends BaseResourceModule {
     listCmd
       .command(`${this.name} <category>`)
       .description(`List ${this.name} core`)
+      .allowExcessArguments(false)
       .action(async (category: string) => {
         try {
           const results = await this.list(category)
@@ -461,6 +462,7 @@ export class ShadcnResource extends BaseResourceModule {
     showCmd
       .command(`${this.name} <category> <name>`)
       .description(`Show ${this.name} core`)
+      .allowExcessArguments(false)
       .action(async (category: string, name: string) => {
         try {
           const result = await this.show(category, name)

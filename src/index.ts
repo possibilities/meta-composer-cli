@@ -17,9 +17,20 @@ export async function main() {
   }
 
   try {
+    // Enable strict mode for better error handling
+    program.exitOverride()
+    program.configureOutput({
+      writeErr: str => process.stderr.write(str),
+    })
+
     await program.parseAsync(process.argv)
-  } catch (error) {
-    console.error('Error:', error)
+  } catch (error: any) {
+    // Commander throws specific errors for invalid commands/arguments
+    if (error.code === 'commander.excessArguments') {
+      // This error is already formatted by Commander
+      process.exit(1)
+    }
+    console.error('Error:', error.message || error)
     process.exit(1)
   }
 }
