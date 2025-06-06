@@ -223,3 +223,7 @@ Please remove the "Instructions" hardcoded text preamble along with the heading 
 Is there anything that's being prepended/appended to the list output or show output that we might want to trim?
 
 Let's not return any trailing/leading whitespace in either command if we currently are.
+
+## 17 [human]
+
+Added autocil config

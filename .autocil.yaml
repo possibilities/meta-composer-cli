@@ -1,0 +1,4 @@
+- vim
+- npm run build:watch
+- claude-composer
+- tree --gitignore
