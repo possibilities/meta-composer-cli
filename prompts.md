@@ -158,3 +158,13 @@ Notice that the category and name are required positional arguments.
 Right now you provide a name without the category and it works but it should not work. Items are always shown are in the context of a category.
 
 Also the show command should throw an error if the cache is empty, it shouldn't try to warm it.
+
+## 12
+
+This works OK but it throw an error because of extra arguments
+
+meta-composer list shadcn core x y z
+
+## 12.1
+
+It **should** return an error when there are extra arguments beyond what is expected.
