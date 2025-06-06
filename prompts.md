@@ -176,3 +176,13 @@ Everywhere that we refer to a "name" regarding shadcn items we should call it "i
 That means that when we build the cache we should bake "id" instead of "name" if applicable.
 
 Look for documentation, comments, and code and ensure everything is properly renamed.
+
+## 14
+
+When I run:
+
+▶ ./dist/cli.js --help
+
+I see the correct --help output but it is followed by this.
+
+Error: (outputHelp)
