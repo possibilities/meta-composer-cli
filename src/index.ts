@@ -25,10 +25,14 @@ export async function main() {
 
     await program.parseAsync(process.argv)
   } catch (error: any) {
-    // Commander throws specific errors for invalid commands/arguments
-    if (error.code === 'commander.excessArguments') {
-      // This error is already formatted by Commander
-      process.exit(1)
+    // Commander throws specific errors that should exit cleanly
+    if (
+      error.code === 'commander.excessArguments' ||
+      error.code === 'commander.help' ||
+      error.code === 'commander.helpDisplayed'
+    ) {
+      // These errors are already formatted by Commander
+      process.exit(0)
     }
     console.error('Error:', error.message || error)
     process.exit(1)
