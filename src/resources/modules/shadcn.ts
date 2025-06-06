@@ -312,7 +312,26 @@ export class ShadcnResource extends BaseResourceModule {
     console.log('Cache warming completed')
   }
 
-  async list(category: string): Promise<any[]> {
+  private exampleView(example: ShadcnComponent['examples'][0]): string {
+    if (example.label && example.description) {
+      return `${example.label}: ${example.description}`
+    }
+    if (example.label) {
+      const name = example.name || ''
+      return `${example.label}: ${name.charAt(0).toUpperCase()}${name.slice(1).replace(/-/g, ' ')}`
+    }
+    if (example.description) {
+      const name = example.name || ''
+      return `${example.description}: ${name.charAt(0).toUpperCase()}${name.slice(1).replace(/-/g, ' ')}`
+    }
+    const name = example.name || ''
+    return name
+      .split('-')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ')
+  }
+
+  async list(category: string): Promise<string> {
     this.ensureCacheDirectory()
 
     if (!this.isCacheWarmed()) {
@@ -320,8 +339,55 @@ export class ShadcnResource extends BaseResourceModule {
       this.warmCache()
     }
 
-    // Return empty array for now - business logic to be implemented later
-    return []
+    const instructions = `## Instructions
+- Use this list of components and blocks to build your UI
+- Always use existing components rather than creating your own
+- Build up more complicated components from existing components, blocks, and examples
+- If you are using a component that has a corresponding example, use the example as a guide to create your own component
+- Use the 'typography' component documentation for many example to help make decisions about typography
+- Use the name of the component or block to get detailed information with the \`ui_show_component_details\` tool:
+    - Full component documention will be returned
+    - Use the \`npx\` command under "Installation" to install a component, add the --force flag for react 19
+    - Look at the "Usage" and "Examples" sections for examples of how to use the component
+## Components`
+
+    const components: ShadcnComponent[] = []
+
+    // Read all metadata files
+    const files = readdirSync(this.metadataDir).filter(f => f.endsWith('.yaml'))
+
+    for (const filename of files) {
+      const filePath = join(this.metadataDir, filename)
+      const fileContent = readFileSync(filePath, 'utf-8')
+      const componentData = yaml.load(fileContent) as ShadcnComponent
+
+      // Format examples using exampleView
+      if (componentData.examples) {
+        componentData.examples = componentData.examples.map(example => ({
+          ...example,
+          // Replace the example object with its formatted view
+          toString: () => this.exampleView(example),
+        }))
+      }
+
+      components.push(componentData)
+    }
+
+    // Sort components by name for consistent output
+    components.sort((a, b) => a.name.localeCompare(b.name))
+
+    // Convert components to properly formatted YAML
+    const componentsYaml = components.map(comp => {
+      const formatted: any = { ...comp }
+      if (formatted.examples) {
+        formatted.examples = formatted.examples.map((ex: any) => ex.toString())
+      }
+      return formatted
+    })
+
+    return (
+      instructions + '\n\n' + yaml.dump(componentsYaml, { sortKeys: false })
+    )
   }
 
   async show(...ids: string[]): Promise<any[]> {
