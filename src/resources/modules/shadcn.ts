@@ -347,18 +347,6 @@ export class ShadcnResource extends BaseResourceModule {
       this.warmCache()
     }
 
-    const instructions = `## Instructions
-- Use this list of components and blocks to build your UI
-- Always use existing components rather than creating your own
-- Build up more complicated components from existing components, blocks, and examples
-- If you are using a component that has a corresponding example, use the example as a guide to create your own component
-- Use the 'typography' component documentation for many example to help make decisions about typography
-- Use the id of the component or block to get detailed information with the \`ui_show_component_details\` tool:
-    - Full component documention will be returned
-    - Use the \`npx\` command under "Installation" to install a component, add the --force flag for react 19
-    - Look at the "Usage" and "Examples" sections for examples of how to use the component
-## Components`
-
     const components: ShadcnComponent[] = []
 
     // Read all metadata files
@@ -393,9 +381,7 @@ export class ShadcnResource extends BaseResourceModule {
       return formatted
     })
 
-    return (
-      instructions + '\n\n' + yaml.dump(componentsYaml, { sortKeys: false })
-    )
+    return yaml.dump(componentsYaml, { sortKeys: false }).trim()
   }
 
   async show(category: string, id: string): Promise<string> {
@@ -420,7 +406,7 @@ export class ShadcnResource extends BaseResourceModule {
 
     if (existsSync(filePath)) {
       const content = readFileSync(filePath, 'utf-8')
-      return content
+      return content.trim()
     } else {
       return `Component or block '${componentId}' not found in category '${category}'`
     }
