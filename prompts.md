@@ -93,3 +93,25 @@ Commands:
 list examples List examples
 show examples Show examples
 help [command] display help for command
+
+## 7 [plan mode]
+
+We previously made a tool in python that would take a local clone of a github repo and process it down into a folder full of files that are useful for another project I'm working on. Read the source code here: ~/code/docs/ui-composer-mcp.xml
+
+Use the ui-composer-mcp.xml code as a reference to undestand the logic that parses and processes the documentation from a specific github repo into the desired format.
+
+Introduce a new module in @src/resources/modules/ called `shadn`.
+
+It will be an expensive function so it will gather all the resources to a filesystem cache ~/.meta-composer/cache/resources/shadcn (similar to how ~/code/docs/ui-composer-mcp.xml works)
+
+When calling the `list` function it will warm the cache if it doesn't exist yet.
+
+When calling the `show` function it will return an error if the cache doesn't exist yet.
+
+Both subcommands should continue to do nothing other than this new behavior, we will finish the business logic using the cached data at a later time.
+
+Work through the process of warming the cache when `list` is called accoring to the correct logic at ~/code/docs/ui-composer-mcp.xml
+
+## 7.1 [plan mode]
+
+Ignore everything about lucid icons
