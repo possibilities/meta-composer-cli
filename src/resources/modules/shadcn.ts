@@ -335,6 +335,13 @@ export class ShadcnResource extends BaseResourceModule {
   async list(category: string): Promise<string> {
     this.ensureCacheDirectory()
 
+    // Validate category
+    if (category !== 'core') {
+      throw new Error(
+        `Invalid category '${category}'. Only 'core' category is supported.`,
+      )
+    }
+
     if (!this.isCacheWarmed()) {
       console.log('Cache is not warmed. Warming cache now...')
       this.warmCache()
@@ -391,54 +398,77 @@ export class ShadcnResource extends BaseResourceModule {
     )
   }
 
-  async show(...ids: string[]): Promise<string> {
+  async show(category: string, name: string): Promise<string> {
     this.ensureCacheDirectory()
 
     if (!this.isCacheWarmed()) {
-      console.log('Cache is not warmed. Warming cache now...')
-      this.warmCache()
+      throw new Error(
+        'Cache is not warmed. Please run "list shadcn core" first to warm the cache.',
+      )
     }
 
-    // For shadcn, we only support showing one component at a time
-    const name = ids[0].toLowerCase().trim()
-    const filePath = join(this.processedDir, `${name}.mdx`)
+    // Validate category
+    if (category !== 'core') {
+      throw new Error(
+        `Invalid category '${category}'. Only 'core' category is supported.`,
+      )
+    }
+
+    // For shadcn, we show the component documentation
+    const componentName = name.toLowerCase().trim()
+    const filePath = join(this.processedDir, `${componentName}.mdx`)
 
     if (existsSync(filePath)) {
       const content = readFileSync(filePath, 'utf-8')
       return content
     } else {
-      return `Component or block '${name}' not found`
+      return `Component or block '${componentName}' not found in category '${category}'`
     }
   }
 
   registerCommands(program: Command): void {
-    // Call parent implementation to register list command
-    super.registerCommands(program)
-
-    // Override the show command for shadcn to output as string
-    let showCmd = program.commands.find(cmd => cmd.name() === 'show')
-    if (showCmd) {
-      // Remove the default shadcn show command
-      const shadcnShowIndex = showCmd.commands.findIndex(
-        cmd => cmd.name() === this.name,
-      )
-      if (shadcnShowIndex !== -1) {
-        showCmd.commands.splice(shadcnShowIndex, 1)
-      }
-
-      // Add custom shadcn show command
-      showCmd
-        .command(`${this.name} <component>`)
-        .description(`Show detailed documentation for a shadcn component`)
-        .action(async (component: string) => {
-          try {
-            const result = await this.show(component)
-            console.log(result)
-          } catch (error) {
-            console.error(`Error showing ${this.name}:`, error)
-            process.exit(1)
-          }
-        })
+    // Get or create list command
+    let listCmd = program.commands.find(cmd => cmd.name() === 'list')
+    if (!listCmd) {
+      listCmd = new Command('list')
+      listCmd.summary(`List resources`)
+      program.addCommand(listCmd)
     }
+
+    // Add shadcn list subcommand with category
+    listCmd
+      .command(`${this.name} <category>`)
+      .description(`List ${this.name} core`)
+      .action(async (category: string) => {
+        try {
+          const results = await this.list(category)
+          console.log(results)
+        } catch (error) {
+          console.error(`Error listing ${this.name}:`, error)
+          process.exit(1)
+        }
+      })
+
+    // Get or create show command
+    let showCmd = program.commands.find(cmd => cmd.name() === 'show')
+    if (!showCmd) {
+      showCmd = new Command('show')
+      showCmd.summary(`Show resources`)
+      program.addCommand(showCmd)
+    }
+
+    // Add shadcn show subcommand with category and name
+    showCmd
+      .command(`${this.name} <category> <name>`)
+      .description(`Show ${this.name} core`)
+      .action(async (category: string, name: string) => {
+        try {
+          const result = await this.show(category, name)
+          console.log(result)
+        } catch (error) {
+          console.error(`Error showing ${this.name}:`, error)
+          process.exit(1)
+        }
+      })
   }
 }
