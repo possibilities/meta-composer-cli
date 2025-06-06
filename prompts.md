@@ -52,3 +52,44 @@ Make a plan.
 ## 5
 
 Remove `peek` subcommand from the project
+
+## 6 [plan mode]
+
+Currently we support "abstract" <resource> subcommands:
+
+list <resource> <category> List resources of a specific category
+show <resource> <id...> Show one or more resources by ID
+
+Let's support "concrete" subcommands instead, e.g:
+
+list example <category> List examples of a specific category
+
+When we run the cli, each possible resource type (found in @src/resources/modules/) should also return everything needed to make a new "list" and a new "show" subcommand.
+
+Potentially a good implementation would be for each module in @src/resources/modules/ to import commmanderjs (look up /tj/commanderjs with context7) and export everything needed to "plug" into the CLI.
+
+## 6.1
+
+That looks good but we need the output to be:
+
+show example <id...> Show one or more example resources by ID
+
+Rather than how it is now:
+
+show <example> <id...> Show one or more example resources by ID
+
+## 6.2
+
+Now it looks like this:
+
+Commands:
+list List resources
+show Show resources
+help [command] display help for command
+
+But it should look like this
+
+Commands:
+list examples List examples
+show examples Show examples
+help [command] display help for command

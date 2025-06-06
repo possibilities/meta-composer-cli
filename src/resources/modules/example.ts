@@ -1,4 +1,5 @@
 import { BaseResourceModule } from '../base.js'
+import { Command } from 'commander'
 
 interface ExampleItem {
   id: string

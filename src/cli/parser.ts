@@ -1,6 +1,4 @@
 import { Command } from 'commander'
-import { handleList } from './commands/list.js'
-import { handleShow } from './commands/show.js'
 
 export function createProgram(): Command {
   const program = new Command()
@@ -10,19 +8,19 @@ export function createProgram(): Command {
     .description('CLI tool for meta composition')
     .version('0.1.0')
 
-  program
-    .command('list <resource> <category>')
-    .description('List resources of a specific category')
-    .action((resource: string, category: string) => {
-      handleList(resource, category, { resource, category })
-    })
-
-  program
-    .command('show <resource> <id...>')
-    .description('Show one or more resources by ID')
-    .action((resource: string, ids: string[]) => {
-      handleShow(resource, ids, { resource, ids })
-    })
+  // Customize help to show commands in desired format
+  program.configureHelp({
+    subcommandTerm: cmd => {
+      // For list and show commands, display with their subcommands
+      if (cmd.name() === 'list' || cmd.name() === 'show') {
+        const subcommands = cmd.commands.map(subcmd => subcmd.name()).join(', ')
+        if (subcommands) {
+          return `${cmd.name()} ${subcommands}`
+        }
+      }
+      return cmd.name()
+    },
+  })
 
   return program
 }

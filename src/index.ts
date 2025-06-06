@@ -8,6 +8,14 @@ export async function main() {
 
   const program = createProgram()
 
+  // Register commands from all resources
+  for (const resource of registry.list()) {
+    const resourceModule = registry.get(resource)
+    if (resourceModule) {
+      resourceModule.registerCommands(program)
+    }
+  }
+
   try {
     await program.parseAsync(process.argv)
   } catch (error) {
