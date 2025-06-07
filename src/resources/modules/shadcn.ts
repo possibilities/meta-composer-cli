@@ -387,7 +387,7 @@ export class ShadcnResource extends BaseResourceModule {
 
     if (!this.isCacheWarmed()) {
       throw new Error(
-        'Cache is not warmed. Please run "shadcn list" first to warm the cache.',
+        'Cache is not warmed. Please run "shadcn list-components" first to warm the cache.',
       )
     }
 
@@ -413,9 +413,9 @@ export class ShadcnResource extends BaseResourceModule {
       .command(this.name)
       .description('shadcn UI components')
 
-    // Add list subcommand
+    // Add list-components subcommand
     shadcnCmd
-      .command('list')
+      .command('list-components')
       .description('List all shadcn UI components')
       .allowExcessArguments(false)
       .action(async () => {
@@ -423,22 +423,22 @@ export class ShadcnResource extends BaseResourceModule {
           const results = await this.list()
           console.log(results)
         } catch (error) {
-          console.error(`Error listing ${this.name}:`, error)
+          console.error(`Error listing ${this.name} components:`, error)
           process.exit(1)
         }
       })
 
-    // Add show subcommand
+    // Add get-component subcommand
     shadcnCmd
-      .command('show <name>')
-      .description('Show details for a specific shadcn component by name')
+      .command('get-component <name>')
+      .description('Get details for a specific shadcn component by name')
       .allowExcessArguments(false)
       .action(async (name: string) => {
         try {
           const result = await this.show(name)
           console.log(result)
         } catch (error) {
-          console.error(`Error showing ${this.name}:`, error)
+          console.error(`Error getting ${this.name} component:`, error)
           process.exit(1)
         }
       })

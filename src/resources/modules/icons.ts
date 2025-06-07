@@ -178,7 +178,7 @@ export class IconsResource extends BaseResourceModule {
 
     if (!this.isCacheWarmed()) {
       throw new Error(
-        'Cache is not warmed. Please run "lucid list icons" first to warm the cache.',
+        'Cache is not warmed. Please run "lucid list-icons icons" first to warm the cache.',
       )
     }
 
@@ -191,10 +191,10 @@ export class IconsResource extends BaseResourceModule {
     // Create lucid command
     const lucidCmd = program.command(this.name).description('Lucide icons')
 
-    // Add list subcommand
+    // Add list-icons subcommand
     lucidCmd
-      .command('list <type>')
-      .description('List Lucide icons (type: icons, tags, or categories)')
+      .command('list-icons <type>')
+      .description('List Lucide icons, tags, or categories')
       .allowExcessArguments(false)
       .action(async (type: string) => {
         try {
@@ -210,16 +210,16 @@ export class IconsResource extends BaseResourceModule {
               `Error: Invalid type '${type}'. Must be one of: icons, tags, categories`,
             )
           } else {
-            console.error(`Error listing ${this.name}:`, error)
+            console.error(`Error listing ${this.name} icons:`, error)
           }
           process.exit(1)
         }
       })
 
-    // Add show subcommand
+    // Add get-icon subcommand
     lucidCmd
-      .command('show <name>')
-      .description('Show details for a specific Lucide icon by name')
+      .command('get-icon <name>')
+      .description('Get details for a specific Lucide icon by name')
       .allowExcessArguments(false)
       .action(async (name: string) => {
         try {
@@ -228,7 +228,7 @@ export class IconsResource extends BaseResourceModule {
             console.log(result)
           }
         } catch (error) {
-          console.error(`Error showing ${this.name}:`, error)
+          console.error(`Error getting ${this.name} icon:`, error)
           process.exit(1)
         }
       })
