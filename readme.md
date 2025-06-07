@@ -17,7 +17,6 @@ The recommended way to use this tool is to create prompts with instructions for 
 
 ```
 ▶ meta-composer --help
-
 Usage: meta-composer [options] [command]
 
 A tool for composing and traversing arbitrary information
@@ -36,6 +35,8 @@ Subcommands for shadcn:
 
   meta-composer shadcn list-components               List all shadcn UI components
   meta-composer shadcn get-component-by-name <name>  Get details for a specific shadcn component by name
+  meta-composer shadcn read-about-typography         The documentation page for shadcn/ui typography
+  meta-composer shadcn read-about-theming            The documentation page for shadcn/ui theming
 
 Subcommands for openapi:
 

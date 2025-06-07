@@ -405,7 +405,7 @@ export class ShadcnResource extends BaseResourceModule {
   }
 
   /**
-   * List all available shadcn UI components
+   * List all available shadcn/ui components
    * @returns YAML-formatted list of components with names, titles, and descriptions
    */
   async listComponents(): Promise<string> {
@@ -458,7 +458,7 @@ export class ShadcnResource extends BaseResourceModule {
   }
 
   /**
-   * Get detailed documentation for a specific shadcn component by name
+   * Get detailed documentation for a specific shadcn/ui component by name
    * @param name - The component name (e.g., 'accordion', 'button')
    * @returns The component's MDX documentation
    */
@@ -541,12 +541,12 @@ export class ShadcnResource extends BaseResourceModule {
     // Create shadcn command
     const shadcnCmd = program
       .command(this.name)
-      .description('shadcn UI components')
+      .description('shadcn/ui components')
 
     // Add list-components subcommand
     shadcnCmd
       .command('list-components')
-      .description('List all shadcn UI components')
+      .description('List all shadcn/ui components')
       .allowExcessArguments(false)
       .action(async () => {
         try {
@@ -561,7 +561,7 @@ export class ShadcnResource extends BaseResourceModule {
     // Add get-component-by-name subcommand
     shadcnCmd
       .command('get-component-by-name <name>')
-      .description('Get details for a specific shadcn component by name')
+      .description('Get details for a specific shadcn/ui component by name')
       .allowExcessArguments(false)
       .action(async (name: string) => {
         try {
@@ -608,11 +608,11 @@ export class ShadcnResource extends BaseResourceModule {
     return [
       {
         name: 'list-components',
-        description: 'List all shadcn UI components',
+        description: 'List all shadcn/ui components',
       },
       {
         name: 'get-component-by-name',
-        description: 'Get details for a specific shadcn component by name',
+        description: 'Get details for a specific shadcn/ui component by name',
         arguments: ['<name>'],
       },
       {
