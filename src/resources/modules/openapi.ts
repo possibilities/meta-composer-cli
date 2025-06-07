@@ -262,19 +262,17 @@ export class OpenAPIResource extends BaseResourceModule {
         }
       })
 
-    // Add show subcommand
+    // Add get-operation subcommand
     openapiCmd
-      .command('show <uri> <operation-id>')
-      .description(
-        'Show OpenAPI endpoint details for the specified operation ID',
-      )
+      .command('get-operation <uri> <operation-id>')
+      .description('Get details for a specific API operation by operation ID')
       .allowExcessArguments(false)
       .action(async (uri: string, operationId: string) => {
         try {
           const result = await this.show(uri, operationId)
           console.log(result)
         } catch (error) {
-          console.error(`Error showing ${this.name}:`, error)
+          console.error(`Error getting ${this.name} operation:`, error)
           process.exit(1)
         }
       })

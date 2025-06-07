@@ -496,3 +496,44 @@ Update any comments, code, or documentation related to this.
 ## 23.5 [plan mode]
 
 Show a summary of all the commands as they exist now
+
+## 23.6 [plan mode]
+
+Each command will be renamed to follow a RPC-ish style of verb-noun
+
+Currently the signatures are:
+
+- shadcn list
+- shadcn show <name>
+
+- openapi list <uri>
+- openapi show <uri> <operation-id>
+- lucid list <type>
+- lucid show <name>
+
+They need to be changed to:
+
+- shadcn list-components
+- shadcn get-component <name>
+
+- openapi list-operations <uri>
+- openapi get-operation <uri> <operation-id>
+
+- lucid list-icons <type>
+- lucid get-icon <name>
+
+## 23.7
+
+Looks good and ready to implement. Please don't run any real commands to test it. I will test everything manually before we continue. Go! <3
+
+## 23.8
+
+Review all the changes we've made since commit 1d7f830d59c80e7cafd40b4fc210469563a45183
+
+Is there any obvious cleanup we should do?
+
+Is there any extraneous, non-essential comments added?
+
+Does the structure make sense since we changed the way the commands are phrased and composed.
+
+Go through all the code and the diff since the aforementioned commit and do any cleanup or maintenence that would be useful.
