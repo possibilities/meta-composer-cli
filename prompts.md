@@ -711,3 +711,18 @@ To
 
 `openapi get-operation-by-id <uri> <operation-id>`
 `shadcn get-component-by-name <name>`
+
+## 27
+
+Rename list-icon-names to list-icons everywhere through the codebase. Be sure to include code, comments, and file names.
+
+## 27.1
+
+I still see a few instances:
+
+src/resources/modules/icons.ts: \* List Lucide icon names, categories, or tags
+src/resources/modules/icons.ts: .description('List all Lucide icon names')
+src/resources/modules/icons.ts: console.error(`Error listing ${this.name} icon names:`, error)
+src/resources/modules/icons.ts: description: 'List all Lucide icon names',
+
+Don't update @prompts.md
