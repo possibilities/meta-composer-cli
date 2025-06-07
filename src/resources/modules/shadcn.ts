@@ -194,14 +194,84 @@ export class ShadcnResource extends BaseResourceModule {
     console.log('Component metadata extraction completed')
   }
 
-  private processComponentDocs(): void {
-    if (existsSync(this.processedDir)) {
-      console.log(`Processed docs already exist at ${this.processedDir}`)
+  private processThemingDoc(): void {
+    const themingProcessedPath = join(this.processedDir, 'theming.mdx')
+
+    if (existsSync(themingProcessedPath)) {
+      console.log(
+        `Processed theming doc already exists at ${themingProcessedPath}`,
+      )
       return
     }
 
+    console.log(`Processing theming documentation...`)
+
+    const srcThemingPath = join(
+      this.repoDir,
+      'apps/www/content/docs/theming.mdx',
+    )
+
+    if (!existsSync(srcThemingPath)) {
+      console.log(`Theming documentation not found at ${srcThemingPath}`)
+      return
+    }
+
+    let content = readFileSync(srcThemingPath, 'utf-8')
+
+    // Extract frontmatter for title and description
+    let title = 'Theming'
+    let description = ''
+
+    const frontmatterMatch = content.match(/^---\s*([\s\S]*?)\s*---/)
+    if (frontmatterMatch) {
+      const frontmatter = frontmatterMatch[1]
+      const titleMatch = frontmatter.match(/title:\s*"?(.*?)"?\s*(?:\n|$)/)
+      const descriptionMatch = frontmatter.match(
+        /description:\s*"?(.*?)"?\s*(?:\n|$)/,
+      )
+
+      if (titleMatch) {
+        title = titleMatch[1].trim()
+      }
+      if (descriptionMatch) {
+        description = descriptionMatch[1].trim()
+      }
+    }
+
+    // Remove frontmatter
+    const mainContentMatch = content.match(/---[\s\S]*?---\s*([\s\S]*)/)
+    const mainContent = mainContentMatch ? mainContentMatch[1] : content
+
+    // Process Callout tags - convert to blockquotes
+    let processedContent = mainContent.replace(
+      /<Callout(?:\s+[^>]*)?>([^]*?)<\/Callout>/g,
+      (match, content) => {
+        const trimmedContent = content.trim()
+        return `> **Note:** ${trimmedContent}`
+      },
+    )
+
+    // Create header
+    let header = `# ${title}`
+    if (description) {
+      header += `\n\n${description}`
+    }
+
+    // Add header and clean up extra newlines
+    processedContent = `${header}\n\n${processedContent}`
+    processedContent = processedContent.replace(/\n\s*\n\s*\n/g, '\n\n')
+
+    // Write processed content
+    writeFileSync(themingProcessedPath, processedContent)
+    console.log(`Processed theming documentation`)
+  }
+
+  private processComponentDocs(): void {
     console.log(`Processing component docs to ${this.processedDir}...`)
-    mkdirSync(this.processedDir, { recursive: true })
+
+    if (!existsSync(this.processedDir)) {
+      mkdirSync(this.processedDir, { recursive: true })
+    }
 
     const srcDocsPath = join(this.repoDir, 'apps/www/content/docs/components')
     const srcExamplesPath = join(
@@ -311,6 +381,7 @@ export class ShadcnResource extends BaseResourceModule {
     this.cloneShadcnRepo()
     this.extractComponentMetadata()
     this.processComponentDocs()
+    this.processThemingDoc()
     console.log('Cache warming completed')
   }
 
@@ -441,6 +512,31 @@ export class ShadcnResource extends BaseResourceModule {
     }
   }
 
+  /**
+   * Read the documentation page for shadcn/ui theming
+   * @returns The theming MDX documentation
+   */
+  async readAboutTheming(): Promise<string> {
+    this.ensureCacheDirectory()
+
+    if (!this.isCacheWarmed()) {
+      throw new Error(
+        'Cache is not warmed. Please run "shadcn list-components" first to warm the cache.',
+      )
+    }
+
+    const filePath = join(this.processedDir, 'theming.mdx')
+
+    if (existsSync(filePath)) {
+      const content = readFileSync(filePath, 'utf-8')
+      return content.trim()
+    } else {
+      throw new Error(
+        'Theming documentation not found. Please run "shadcn list-components" first to warm the cache.',
+      )
+    }
+  }
+
   registerCommands(program: Command): void {
     // Create shadcn command
     const shadcnCmd = program
@@ -491,6 +587,21 @@ export class ShadcnResource extends BaseResourceModule {
           process.exit(1)
         }
       })
+
+    // Add read-about-theming subcommand
+    shadcnCmd
+      .command('read-about-theming')
+      .description('The documentation page for shadcn/ui theming')
+      .allowExcessArguments(false)
+      .action(async () => {
+        try {
+          const result = await this.readAboutTheming()
+          console.log(result)
+        } catch (error) {
+          console.error(`Error reading theming documentation:`, error)
+          process.exit(1)
+        }
+      })
   }
 
   getCommandInfo(): CommandInfo[] {
@@ -507,6 +618,10 @@ export class ShadcnResource extends BaseResourceModule {
       {
         name: 'read-about-typography',
         description: 'The documentation page for shadcn/ui typography',
+      },
+      {
+        name: 'read-about-theming',
+        description: 'The documentation page for shadcn/ui theming',
       },
     ]
   }

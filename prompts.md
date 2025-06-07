@@ -877,3 +877,15 @@ Typography is one of the components that shows up on the list of components and 
 ## 29.1
 
 Filter "typography" out of the components list when calling `shadcn list-components`
+
+## 29.2 [plan mode]
+
+````
+Add new subcommand for shadcn:
+
+```
+meta-composer shadcn read-about-theming         The documentation page for shadcn/ui theming
+```
+
+From our previous conversation and your research we learned that that the typography document went through a complicated process to have placeholders replaced with example/code content. In the case of typography we didn't have to do anything about it because the typography document gets processed along with other components. The theming document is different in that it 1. we need to locate it, it is not found with the component and 2. we need to do the replacement logic like we do on component mdx documents. No. 2 should be added to the cache warming process along with processing components mdx.
+````
