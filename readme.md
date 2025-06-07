@@ -45,10 +45,10 @@ Subcommands for openapi:
 
 Subcommands for lucid:
 
-  meta-composer lucid list-icons                        List all Lucide icons
-  meta-composer lucid list-icon-categories              List all Lucide icon categories
-  meta-composer lucid list-icon-tags                    List all Lucide icon tags
-  meta-composer lucid get-icons-by-category <category>  Get all icons that belong to a specific category
-  meta-composer lucid get-icons-by-tag <tag>            Get all icons that have a specific tag
-  meta-composer lucid read-about-react-usage            The documentation page for lucid icon usage in React
+  meta-composer lucid list-icons                          List all Lucide icons
+  meta-composer lucid list-icon-categories                List all Lucide icon categories
+  meta-composer lucid list-icon-tags                      List all Lucide icon tags
+  meta-composer lucid list-icons-for-category <category>  List all Lucide icons that belong to a specific category
+  meta-composer lucid list-icons-for-tag <tag>            List all Lucide icons that have a specific tag
+  meta-composer lucid read-about-react-usage              The documentation page for lucid icon usage in React
 ```

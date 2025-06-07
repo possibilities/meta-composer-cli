@@ -893,8 +893,33 @@ From our previous conversation and your research we learned that that the typogr
 
 ## 29.2
 
+```
 Add new subcommand to lucid:
 
 meta-composer lucid read-about-react-usage The documentation page for lucid icon usage in React
 
 Look through the lucid cache and find the md at docs/guide/packages/lucide-react.md. It should be able to able to be used directly as the response to the `read-about-react-usage` subcommand
+```
+
+## 30 [plan mode]
+
+```
+Rename get-icons-by-category to list-icons-for-category
+Rename get-icons-by-tags to list-icons-for-tags
+
+Find every code and comment and documentation related to these throughout the codebase and make sure everything is updated.
+
+Use `git grep -i "get.*icons"` to find occurences of both commands
+```
+
+## 30.1 [plan mode]
+
+```
+Don't update @prompts.md
+```
+
+## 30.2
+
+```
+Wherever it says "Get all icons" it should say "List all Lucide icons"
+```
