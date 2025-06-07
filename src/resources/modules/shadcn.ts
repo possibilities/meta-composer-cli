@@ -382,11 +382,11 @@ export class ShadcnResource extends BaseResourceModule {
   }
 
   /**
-   * Get detailed documentation for a specific shadcn component
+   * Get detailed documentation for a specific shadcn component by name
    * @param name - The component name (e.g., 'accordion', 'button')
    * @returns The component's MDX documentation
    */
-  async getComponent(name: string): Promise<string> {
+  async getComponentByName(name: string): Promise<string> {
     this.ensureCacheDirectory()
 
     if (!this.isCacheWarmed()) {
@@ -432,14 +432,14 @@ export class ShadcnResource extends BaseResourceModule {
         }
       })
 
-    // Add get-component subcommand
+    // Add get-component-by-name subcommand
     shadcnCmd
-      .command('get-component <name>')
+      .command('get-component-by-name <name>')
       .description('Get details for a specific shadcn component by name')
       .allowExcessArguments(false)
       .action(async (name: string) => {
         try {
-          const result = await this.getComponent(name)
+          const result = await this.getComponentByName(name)
           console.log(result)
         } catch (error) {
           console.error(`Error getting ${this.name} component:`, error)
@@ -455,7 +455,7 @@ export class ShadcnResource extends BaseResourceModule {
         description: 'List all shadcn UI components',
       },
       {
-        name: 'get-component',
+        name: 'get-component-by-name',
         description: 'Get details for a specific shadcn component by name',
         arguments: ['<name>'],
       },

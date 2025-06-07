@@ -216,12 +216,12 @@ export class OpenAPIResource extends BaseResourceModule {
   }
 
   /**
-   * Get detailed information for a specific API operation
+   * Get detailed information for a specific API operation by operation ID
    * @param uri - The URI to the OpenAPI specification
    * @param operationId - The operation ID from the OpenAPI spec
    * @returns Markdown-formatted operation details including parameters, request/response schemas
    */
-  async getOperation(uri: string, operationId: string): Promise<string> {
+  async getOperationById(uri: string, operationId: string): Promise<string> {
     const spec = await this.fetchOpenAPISpec(uri)
     const endpoints = this.extractEndpoints(spec)
 
@@ -269,14 +269,14 @@ export class OpenAPIResource extends BaseResourceModule {
         }
       })
 
-    // Add get-operation subcommand
+    // Add get-operation-by-id subcommand
     openapiCmd
-      .command('get-operation <uri> <operation-id>')
+      .command('get-operation-by-id <uri> <operation-id>')
       .description('Get details for a specific API operation by operation ID')
       .allowExcessArguments(false)
       .action(async (uri: string, operationId: string) => {
         try {
-          const result = await this.getOperation(uri, operationId)
+          const result = await this.getOperationById(uri, operationId)
           console.log(result)
         } catch (error) {
           console.error(`Error getting ${this.name} operation:`, error)
@@ -293,7 +293,7 @@ export class OpenAPIResource extends BaseResourceModule {
         arguments: ['<uri>'],
       },
       {
-        name: 'get-operation',
+        name: 'get-operation-by-id',
         description: 'Get details for a specific API operation by operation ID',
         arguments: ['<uri>', '<operation-id>'],
       },
