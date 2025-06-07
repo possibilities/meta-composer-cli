@@ -252,7 +252,7 @@ export class OpenAPIResource extends BaseResourceModule {
     // Create openapi command
     const openapiCmd = program
       .command(this.name)
-      .description('OpenAPI specification tools')
+      .description('OpenAPI specifications')
 
     // Add list-operations subcommand
     openapiCmd
