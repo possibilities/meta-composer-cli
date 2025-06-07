@@ -426,3 +426,59 @@ Always use `pnpm add` to add new dependencies
 ## 22.3 [plan mode]
 
 Before we go ahead an execute the plan I'm wondering if you see other places we should be using zod. Asking for the purpose only to revisit it later, so please let me know but don't add it to the current plan we're about to execute.
+
+## 23 [plan mode]
+
+Please give me a list of all the possible commands available
+
+When you call ./dist/cli.js --help it gives a list of possible commands. Walk the tree of commands and make a report for me. Even though the commands start with a verb please organize them by the following "resource" name (e.g. openapi, shadcn)
+
+## 23.1 [plan mode]
+
+I would like help changing the order of arguments
+
+Please look for all related code, comments, and docs as you update the app
+
+The current way looks like this:
+
+- list shadcn core
+- show shadcn core <id>
+- list openapi <uri>
+- show openapi <uri> <id>
+- list icons lucid <type>
+  - icons
+  - tags
+  - categories
+- show icons lucid <id>
+
+The new format will be:
+
+- shadcn list
+- shadcn show <id>
+- openapi list <uri>
+- openapi show <uri> <id>
+- lucid list <type>
+  - icons
+  - tags
+  - categories
+- lucid show <id>
+
+## 23.2
+
+In the openapi resource I want to change "id" everywhere to "operation-id"
+
+That means that the openapi list command should use the operation id from openapi rather than creating ids
+
+That also means that the openapi show command should change from having an <id> to an <operation-id> that can be used to correlate the listed paths when calling openapi list.
+
+Update any comments, code, or documentation related to this.
+
+## 23.3
+
+In the shadcn resource I want to change "id" everywhere to "name"
+
+That means that the shadcn list command should use the name of the component (which should be found in the cached data we read from) rather than creating ids
+
+That also means that the shadcn show command should change from having an <id> to an <name> that can be used to correlate the listed components found in `shadcn list` with the corresponding detail document.
+
+Update any comments, code, or documentation related to this.
