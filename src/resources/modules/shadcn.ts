@@ -333,7 +333,11 @@ export class ShadcnResource extends BaseResourceModule {
       .join(' ')
   }
 
-  async list(): Promise<string> {
+  /**
+   * List all available shadcn UI components
+   * @returns YAML-formatted list of components with names, titles, and descriptions
+   */
+  async listComponents(): Promise<string> {
     this.ensureCacheDirectory()
 
     if (!this.isCacheWarmed()) {
@@ -351,11 +355,9 @@ export class ShadcnResource extends BaseResourceModule {
       const fileContent = readFileSync(filePath, 'utf-8')
       const componentData = yaml.load(fileContent) as ShadcnComponent
 
-      // Format examples using exampleView
       if (componentData.examples) {
         componentData.examples = componentData.examples.map(example => ({
           ...example,
-          // Replace the example object with its formatted view
           toString: () => this.exampleView(example),
         }))
       }
@@ -363,10 +365,7 @@ export class ShadcnResource extends BaseResourceModule {
       components.push(componentData)
     }
 
-    // Sort components by id for consistent output
     components.sort((a, b) => a.id.localeCompare(b.id))
-
-    // Convert components to properly formatted YAML with component names
     const componentsYaml = components.map(comp => {
       const formatted: any = {
         name: comp.id,
@@ -382,7 +381,12 @@ export class ShadcnResource extends BaseResourceModule {
     return yaml.dump(componentsYaml, { sortKeys: false }).trim()
   }
 
-  async show(name: string): Promise<string> {
+  /**
+   * Get detailed documentation for a specific shadcn component
+   * @param name - The component name (e.g., 'accordion', 'button')
+   * @returns The component's MDX documentation
+   */
+  async getComponent(name: string): Promise<string> {
     this.ensureCacheDirectory()
 
     if (!this.isCacheWarmed()) {
@@ -420,7 +424,7 @@ export class ShadcnResource extends BaseResourceModule {
       .allowExcessArguments(false)
       .action(async () => {
         try {
-          const results = await this.list()
+          const results = await this.listComponents()
           console.log(results)
         } catch (error) {
           console.error(`Error listing ${this.name} components:`, error)
@@ -435,7 +439,7 @@ export class ShadcnResource extends BaseResourceModule {
       .allowExcessArguments(false)
       .action(async (name: string) => {
         try {
-          const result = await this.show(name)
+          const result = await this.getComponent(name)
           console.log(result)
         } catch (error) {
           console.error(`Error getting ${this.name} component:`, error)
