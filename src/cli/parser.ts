@@ -72,9 +72,10 @@ export function createProgram(): Command {
               output.push(`Subcommands for ${moduleName}:\n`)
 
               const subcommandTerms = commands.map(cmd => {
+                const baseCmd = `meta-composer ${moduleName} ${cmd.name}`
                 return cmd.arguments
-                  ? `${cmd.name} ${cmd.arguments.join(' ')}`
-                  : cmd.name
+                  ? `${baseCmd} ${cmd.arguments.join(' ')}`
+                  : baseCmd
               })
               const maxSubcommandWidth = Math.max(
                 ...subcommandTerms.map(term => term.length),
