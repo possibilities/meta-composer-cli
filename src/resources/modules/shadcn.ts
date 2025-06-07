@@ -333,15 +333,8 @@ export class ShadcnResource extends BaseResourceModule {
       .join(' ')
   }
 
-  async list(category: string): Promise<string> {
+  async list(): Promise<string> {
     this.ensureCacheDirectory()
-
-    // Validate category
-    if (category !== 'core') {
-      throw new Error(
-        `Invalid category '${category}'. Only 'core' category is supported.`,
-      )
-    }
 
     if (!this.isCacheWarmed()) {
       console.log('Cache is not warmed. Warming cache now...')
@@ -373,10 +366,10 @@ export class ShadcnResource extends BaseResourceModule {
     // Sort components by id for consistent output
     components.sort((a, b) => a.id.localeCompare(b.id))
 
-    // Convert components to properly formatted YAML with incrementing IDs
-    const componentsYaml = components.map((comp, index) => {
+    // Convert components to properly formatted YAML with component names
+    const componentsYaml = components.map(comp => {
       const formatted: any = {
-        id: index + 1,
+        name: comp.id,
         title: comp.title,
         description: comp.description,
       }
@@ -389,79 +382,45 @@ export class ShadcnResource extends BaseResourceModule {
     return yaml.dump(componentsYaml, { sortKeys: false }).trim()
   }
 
-  async show(category: string, id: string): Promise<string> {
+  async show(name: string): Promise<string> {
     this.ensureCacheDirectory()
 
     if (!this.isCacheWarmed()) {
       throw new Error(
-        'Cache is not warmed. Please run "list shadcn core" first to warm the cache.',
+        'Cache is not warmed. Please run "shadcn list" first to warm the cache.',
       )
     }
 
-    // Validate category
-    if (category !== 'core') {
-      throw new Error(
-        `Invalid category '${category}'. Only 'core' category is supported.`,
-      )
-    }
-
-    // Parse numeric ID
-    const numericId = parseInt(id, 10)
-    if (isNaN(numericId) || numericId < 1) {
-      return `Invalid ID '${id}'. Please provide a valid numeric ID.`
-    }
-
-    // Load all components to map numeric ID to component name
-    const components: ShadcnComponent[] = []
-    const files = readdirSync(this.metadataDir).filter(f => f.endsWith('.yaml'))
-
-    for (const filename of files) {
-      const filePath = join(this.metadataDir, filename)
-      const fileContent = readFileSync(filePath, 'utf-8')
-      const componentData = yaml.load(fileContent) as ShadcnComponent
-      components.push(componentData)
-    }
-
-    // Sort components by id for consistent mapping
-    components.sort((a, b) => a.id.localeCompare(b.id))
-
-    // Find component by numeric index
-    const componentIndex = numericId - 1
-    if (componentIndex >= components.length) {
-      return `Component with ID '${id}' not found. Valid IDs are 1-${components.length}.`
-    }
-
-    const component = components[componentIndex]
-    const componentId = component.id
-
-    // Show the component documentation
-    const filePath = join(this.processedDir, `${componentId}.mdx`)
+    // Show the component documentation directly by name
+    const filePath = join(this.processedDir, `${name}.mdx`)
 
     if (existsSync(filePath)) {
       const content = readFileSync(filePath, 'utf-8')
       return content.trim()
     } else {
-      return `Component documentation for '${componentId}' not found`
+      // Provide helpful error message with available component names
+      const files = readdirSync(this.metadataDir).filter(f =>
+        f.endsWith('.yaml'),
+      )
+      const availableNames = files.map(f => f.replace('.yaml', '')).sort()
+      return `Component with name '${name}' not found. Available component names: ${availableNames.join(', ')}`
     }
   }
 
   registerCommands(program: Command): void {
-    // Get or create list command
-    let listCmd = program.commands.find(cmd => cmd.name() === 'list')
-    if (!listCmd) {
-      listCmd = new Command('list')
-      listCmd.summary(`List resources`)
-      program.addCommand(listCmd)
-    }
+    // Create shadcn command
+    const shadcnCmd = program
+      .command(this.name)
+      .description('shadcn UI components')
 
-    // Add shadcn list subcommand with category
-    listCmd
-      .command(`${this.name} <category>`)
-      .description(`List ${this.name} core`)
+    // Add list subcommand
+    shadcnCmd
+      .command('list')
+      .description('List all shadcn UI components')
       .allowExcessArguments(false)
-      .action(async (category: string) => {
+      .action(async () => {
         try {
-          const results = await this.list(category)
+          const results = await this.list()
           console.log(results)
         } catch (error) {
           console.error(`Error listing ${this.name}:`, error)
@@ -469,22 +428,14 @@ export class ShadcnResource extends BaseResourceModule {
         }
       })
 
-    // Get or create show command
-    let showCmd = program.commands.find(cmd => cmd.name() === 'show')
-    if (!showCmd) {
-      showCmd = new Command('show')
-      showCmd.summary(`Show resources`)
-      program.addCommand(showCmd)
-    }
-
-    // Add shadcn show subcommand with category and name
-    showCmd
-      .command(`${this.name} <category> <id>`)
-      .description(`Show ${this.name} core`)
+    // Add show subcommand
+    shadcnCmd
+      .command('show <name>')
+      .description('Show details for a specific shadcn component by name')
       .allowExcessArguments(false)
-      .action(async (category: string, id: string) => {
+      .action(async (name: string) => {
         try {
-          const result = await this.show(category, id)
+          const result = await this.show(name)
           console.log(result)
         } catch (error) {
           console.error(`Error showing ${this.name}:`, error)

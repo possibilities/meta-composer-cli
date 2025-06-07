@@ -29,7 +29,7 @@ export class IconsResource extends BaseResourceModule {
   private metadataDir: string
 
   constructor() {
-    super('icons')
+    super('lucid')
 
     // Set up cache directories
     this.cacheDir = join(
@@ -129,15 +129,8 @@ export class IconsResource extends BaseResourceModule {
     console.log('Cache warming completed')
   }
 
-  async list(category: string, type: IconListType): Promise<string> {
+  async list(type: IconListType): Promise<string> {
     this.ensureCacheDirectory()
-
-    // Validate category
-    if (category !== 'lucid') {
-      throw new Error(
-        `Invalid category '${category}'. Only 'lucid' category is supported.`,
-      )
-    }
 
     if (!this.isCacheWarmed()) {
       console.log('Cache is not warmed. Warming cache now...')
@@ -180,19 +173,12 @@ export class IconsResource extends BaseResourceModule {
     }
   }
 
-  async show(category: string, id: string): Promise<string> {
+  async show(id: string): Promise<string> {
     this.ensureCacheDirectory()
-
-    // Validate category
-    if (category !== 'lucid') {
-      throw new Error(
-        `Invalid category '${category}'. Only 'lucid' category is supported.`,
-      )
-    }
 
     if (!this.isCacheWarmed()) {
       throw new Error(
-        'Cache is not warmed. Please run "list icons lucid" first to warm the cache.',
+        'Cache is not warmed. Please run "lucid list icons" first to warm the cache.',
       )
     }
 
@@ -201,24 +187,19 @@ export class IconsResource extends BaseResourceModule {
   }
 
   registerCommands(program: Command): void {
-    // Get or create list command
-    let listCmd = program.commands.find(cmd => cmd.name() === 'list')
-    if (!listCmd) {
-      listCmd = new Command('list')
-      listCmd.summary(`List resources`)
-      program.addCommand(listCmd)
-    }
+    // Create lucid command
+    const lucidCmd = program.command(this.name).description('Lucide icons')
 
-    // Add icons list subcommand with category and type
-    listCmd
-      .command(`${this.name} <category> <type>`)
-      .description(`List ${this.name} lucid (type: icons, tags, or categories)`)
+    // Add list subcommand
+    lucidCmd
+      .command('list <type>')
+      .description('List Lucide icons (type: icons, tags, or categories)')
       .allowExcessArguments(false)
-      .action(async (category: string, type: string) => {
+      .action(async (type: string) => {
         try {
           // Validate type using Zod
           const validatedType = IconListTypeSchema.parse(type)
-          const results = await this.list(category, validatedType)
+          const results = await this.list(validatedType)
           if (results) {
             console.log(results)
           }
@@ -234,22 +215,14 @@ export class IconsResource extends BaseResourceModule {
         }
       })
 
-    // Get or create show command
-    let showCmd = program.commands.find(cmd => cmd.name() === 'show')
-    if (!showCmd) {
-      showCmd = new Command('show')
-      showCmd.summary(`Show resources`)
-      program.addCommand(showCmd)
-    }
-
-    // Add icons show subcommand with category and id
-    showCmd
-      .command(`${this.name} <category> <id>`)
-      .description(`Show ${this.name} lucid`)
+    // Add show subcommand
+    lucidCmd
+      .command('show <id>')
+      .description('Show details for a specific Lucide icon')
       .allowExcessArguments(false)
-      .action(async (category: string, id: string) => {
+      .action(async (id: string) => {
         try {
-          const result = await this.show(category, id)
+          const result = await this.show(id)
           if (result) {
             console.log(result)
           }

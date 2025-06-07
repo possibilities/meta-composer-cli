@@ -33,7 +33,6 @@ interface OpenAPISpec {
 }
 
 interface APIEndpoint {
-  id: number
   method: string
   path: string
   operationId?: string
@@ -64,7 +63,6 @@ export class OpenAPIResource extends BaseResourceModule {
 
   private extractEndpoints(spec: OpenAPISpec): APIEndpoint[] {
     const endpoints: APIEndpoint[] = []
-    let id = 1
 
     if (!spec.paths) {
       return endpoints
@@ -80,7 +78,6 @@ export class OpenAPIResource extends BaseResourceModule {
         }
 
         const endpoint: APIEndpoint = {
-          id: id++,
           method: method.toUpperCase(),
           path: path,
           operationId: operation.operationId,
@@ -205,7 +202,7 @@ export class OpenAPIResource extends BaseResourceModule {
 
     // Format endpoints for YAML output
     const formattedEndpoints = endpoints.map(endpoint => ({
-      id: endpoint.id,
+      'operation-id': endpoint.operationId || 'N/A',
       verb: endpoint.method,
       path: endpoint.path,
       description:
@@ -215,20 +212,19 @@ export class OpenAPIResource extends BaseResourceModule {
     return yaml.dump(formattedEndpoints, { sortKeys: false }).trim()
   }
 
-  async show(uri: string, id: string): Promise<string> {
+  async show(uri: string, operationId: string): Promise<string> {
     const spec = await this.fetchOpenAPISpec(uri)
     const endpoints = this.extractEndpoints(spec)
 
-    // Parse numeric ID
-    const numericId = parseInt(id, 10)
-    if (isNaN(numericId) || numericId < 1) {
-      return `Invalid ID '${id}'. Please provide a valid numeric ID.`
-    }
-
-    // Find endpoint by ID
-    const endpoint = endpoints.find(ep => ep.id === numericId)
+    // Find endpoint by operation ID
+    const endpoint = endpoints.find(ep => ep.operationId === operationId)
     if (!endpoint) {
-      return `Endpoint with ID '${id}' not found. Valid IDs are 1-${endpoints.length}.`
+      // Provide helpful error message with available operation IDs
+      const availableIds = endpoints
+        .filter(ep => ep.operationId)
+        .map(ep => ep.operationId)
+        .join(', ')
+      return `Endpoint with operation ID '${operationId}' not found. Available operation IDs: ${availableIds || 'None (no operation IDs defined in spec)'}`
     }
 
     // Get the operation details
@@ -246,18 +242,15 @@ export class OpenAPIResource extends BaseResourceModule {
   }
 
   registerCommands(program: Command): void {
-    // Get or create list command
-    let listCmd = program.commands.find(cmd => cmd.name() === 'list')
-    if (!listCmd) {
-      listCmd = new Command('list')
-      listCmd.summary(`List resources`)
-      program.addCommand(listCmd)
-    }
+    // Create openapi command
+    const openapiCmd = program
+      .command(this.name)
+      .description('OpenAPI specification tools')
 
-    // Add openapi list subcommand with URI
-    listCmd
-      .command(`${this.name} <uri>`)
-      .description(`List OpenAPI endpoints from the specified URI`)
+    // Add list subcommand
+    openapiCmd
+      .command('list <uri>')
+      .description('List OpenAPI endpoints from the specified URI')
       .allowExcessArguments(false)
       .action(async (uri: string) => {
         try {
@@ -269,22 +262,16 @@ export class OpenAPIResource extends BaseResourceModule {
         }
       })
 
-    // Get or create show command
-    let showCmd = program.commands.find(cmd => cmd.name() === 'show')
-    if (!showCmd) {
-      showCmd = new Command('show')
-      showCmd.summary(`Show resources`)
-      program.addCommand(showCmd)
-    }
-
-    // Add openapi show subcommand with URI and ID
-    showCmd
-      .command(`${this.name} <uri> <id>`)
-      .description(`Show OpenAPI endpoint details for the specified ID`)
+    // Add show subcommand
+    openapiCmd
+      .command('show <uri> <operation-id>')
+      .description(
+        'Show OpenAPI endpoint details for the specified operation ID',
+      )
       .allowExcessArguments(false)
-      .action(async (uri: string, id: string) => {
+      .action(async (uri: string, operationId: string) => {
         try {
-          const result = await this.show(uri, id)
+          const result = await this.show(uri, operationId)
           console.log(result)
         } catch (error) {
           console.error(`Error showing ${this.name}:`, error)
