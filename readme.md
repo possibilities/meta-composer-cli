@@ -17,6 +17,7 @@ The recommended way to use this tool is to create prompts with instructions for 
 
 ```
 ▶ meta-composer --help
+
 Usage: meta-composer [options] [command]
 
 A tool for composing and traversing arbitrary information
@@ -33,19 +34,19 @@ Commands:
 
 Subcommands for shadcn:
 
-  list-components               List all shadcn UI components
-  get-component-by-name <name>  Get details for a specific shadcn component by name
+  meta-composer shadcn list-components               List all shadcn UI components
+  meta-composer shadcn get-component-by-name <name>  Get details for a specific shadcn component by name
 
 Subcommands for openapi:
 
-  list-operations <uri>                     List all API operations from the specified OpenAPI URI
-  get-operation-by-id <uri> <operation-id>  Get details for a specific API operation by operation ID
+  meta-composer openapi list-operations <uri>                     List all API operations from the specified OpenAPI URI
+  meta-composer openapi get-operation-by-id <uri> <operation-id>  Get details for a specific API operation by operation ID
 
 Subcommands for lucid:
 
-  list-icon-names                   List all Lucide icon names
-  list-icon-categories              List all Lucide icon categories
-  list-icon-tags                    List all Lucide icon tags
-  get-icons-by-category <category>  Get all icons that belong to a specific category
-  get-icons-by-tag <tag>            Get all icons that have a specific tag
+  meta-composer lucid list-icons                        List all Lucide icons
+  meta-composer lucid list-icon-categories              List all Lucide icon categories
+  meta-composer lucid list-icon-tags                    List all Lucide icon tags
+  meta-composer lucid get-icons-by-category <category>  Get all icons that belong to a specific category
+  meta-composer lucid get-icons-by-tag <tag>            Get all icons that have a specific tag
 ```
