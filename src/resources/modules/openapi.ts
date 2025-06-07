@@ -1,4 +1,4 @@
-import { BaseResourceModule } from '../base.js'
+import { BaseResourceModule, CommandInfo } from '../base.js'
 import { Command } from 'commander'
 import * as yaml from 'js-yaml'
 
@@ -283,5 +283,20 @@ export class OpenAPIResource extends BaseResourceModule {
           process.exit(1)
         }
       })
+  }
+
+  getCommandInfo(): CommandInfo[] {
+    return [
+      {
+        name: 'list-operations',
+        description: 'List all API operations from the specified OpenAPI URI',
+        arguments: ['<uri>'],
+      },
+      {
+        name: 'get-operation',
+        description: 'Get details for a specific API operation by operation ID',
+        arguments: ['<uri>', '<operation-id>'],
+      },
+    ]
   }
 }

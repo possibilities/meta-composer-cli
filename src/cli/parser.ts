@@ -9,7 +9,6 @@ export function createProgram(): Command {
     .description('A tool for composing and traversing arbitrary information')
     .version('0.1.0')
 
-  // Add custom help formatting to show installed modules
   program.configureHelp({
     formatHelp: (cmd, helper) => {
       const termWidth = helper.padWidth(cmd, helper)
@@ -35,25 +34,14 @@ export function createProgram(): Command {
 
       let output = []
 
-      // Usage
       const usage = helper.commandUsage(cmd)
       output.push('Usage: ' + usage + '\n')
 
-      // Description
       const description = helper.commandDescription(cmd)
       if (description) {
         output.push(description + '\n')
       }
 
-      // Add installed modules section only for the main help
-      if (cmd.name() === 'meta-composer') {
-        const modules = registry.list()
-        if (modules.length > 0) {
-          output.push('Installed modules:\n' + formatList(modules) + '\n')
-        }
-      }
-
-      // Options
       const optionList = helper.visibleOptions(cmd).map(option => {
         return formatItem(
           helper.optionTerm(option),
@@ -64,7 +52,6 @@ export function createProgram(): Command {
         output.push('Options:\n' + formatList(optionList) + '\n')
       }
 
-      // Commands
       const commandList = helper.visibleCommands(cmd).map(cmd => {
         return formatItem(
           helper.subcommandTerm(cmd),
@@ -73,6 +60,37 @@ export function createProgram(): Command {
       })
       if (commandList.length) {
         output.push('Commands:\n' + formatList(commandList) + '\n')
+      }
+
+      if (cmd.name() === 'meta-composer') {
+        const modules = registry.list()
+        for (const moduleName of modules) {
+          const module = registry.get(moduleName)
+          if (module) {
+            const commands = module.getCommandInfo()
+            if (commands.length > 0) {
+              output.push(`Subcommands for ${moduleName}:\n`)
+
+              const subcommandTerms = commands.map(cmd => {
+                return cmd.arguments
+                  ? `${cmd.name} ${cmd.arguments.join(' ')}`
+                  : cmd.name
+              })
+              const maxSubcommandWidth = Math.max(
+                ...subcommandTerms.map(term => term.length),
+              )
+
+              const subcommandList = commands.map((cmd, index) => {
+                const cmdName = subcommandTerms[index]
+                const padding = ' '.repeat(
+                  Math.max(0, maxSubcommandWidth - cmdName.length),
+                )
+                return `  ${cmdName}${padding}  ${cmd.description}`
+              })
+              output.push(subcommandList.join('\n') + '\n')
+            }
+          }
+        }
       }
 
       return output.join('\n')
