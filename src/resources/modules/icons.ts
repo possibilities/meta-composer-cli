@@ -129,7 +129,12 @@ export class IconsResource extends BaseResourceModule {
     console.log('Cache warming completed')
   }
 
-  async list(type: IconListType): Promise<string> {
+  /**
+   * List Lucide icons, tags, or categories
+   * @param type - The type of data to list ('icons', 'tags', or 'categories')
+   * @returns A list of items separated by newlines
+   */
+  async listIcons(type: IconListType): Promise<string> {
     this.ensureCacheDirectory()
 
     if (!this.isCacheWarmed()) {
@@ -173,7 +178,12 @@ export class IconsResource extends BaseResourceModule {
     }
   }
 
-  async show(name: string): Promise<string> {
+  /**
+   * Get details for a specific Lucide icon
+   * @param name - The icon name
+   * @returns Icon details (currently empty, placeholder for future implementation)
+   */
+  async getIcon(name: string): Promise<string> {
     this.ensureCacheDirectory()
 
     if (!this.isCacheWarmed()) {
@@ -182,8 +192,7 @@ export class IconsResource extends BaseResourceModule {
       )
     }
 
-    // Return empty for now as per requirements
-    // When implemented, this will show details for the icon with the given name
+    // Placeholder for future implementation
     return ''
   }
 
@@ -200,7 +209,7 @@ export class IconsResource extends BaseResourceModule {
         try {
           // Validate type using Zod
           const validatedType = IconListTypeSchema.parse(type)
-          const results = await this.list(validatedType)
+          const results = await this.listIcons(validatedType)
           if (results) {
             console.log(results)
           }
@@ -223,7 +232,7 @@ export class IconsResource extends BaseResourceModule {
       .allowExcessArguments(false)
       .action(async (name: string) => {
         try {
-          const result = await this.show(name)
+          const result = await this.getIcon(name)
           if (result) {
             console.log(result)
           }

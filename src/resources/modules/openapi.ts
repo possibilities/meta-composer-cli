@@ -70,7 +70,6 @@ export class OpenAPIResource extends BaseResourceModule {
 
     for (const [path, pathItem] of Object.entries(spec.paths)) {
       for (const [method, operation] of Object.entries(pathItem)) {
-        // Skip non-operation fields
         if (
           ['parameters', 'servers', 'summary', 'description'].includes(method)
         ) {
@@ -196,11 +195,15 @@ export class OpenAPIResource extends BaseResourceModule {
     return output.trim()
   }
 
-  async list(uri: string): Promise<string> {
+  /**
+   * List all API operations from an OpenAPI specification
+   * @param uri - The URI to the OpenAPI specification (JSON format)
+   * @returns YAML-formatted list of operations with operation IDs, verbs, paths, and descriptions
+   */
+  async listOperations(uri: string): Promise<string> {
     const spec = await this.fetchOpenAPISpec(uri)
     const endpoints = this.extractEndpoints(spec)
 
-    // Format endpoints for YAML output
     const formattedEndpoints = endpoints.map(endpoint => ({
       'operation-id': endpoint.operationId || 'N/A',
       verb: endpoint.method,
@@ -212,14 +215,18 @@ export class OpenAPIResource extends BaseResourceModule {
     return yaml.dump(formattedEndpoints, { sortKeys: false }).trim()
   }
 
-  async show(uri: string, operationId: string): Promise<string> {
+  /**
+   * Get detailed information for a specific API operation
+   * @param uri - The URI to the OpenAPI specification
+   * @param operationId - The operation ID from the OpenAPI spec
+   * @returns Markdown-formatted operation details including parameters, request/response schemas
+   */
+  async getOperation(uri: string, operationId: string): Promise<string> {
     const spec = await this.fetchOpenAPISpec(uri)
     const endpoints = this.extractEndpoints(spec)
 
-    // Find endpoint by operation ID
     const endpoint = endpoints.find(ep => ep.operationId === operationId)
     if (!endpoint) {
-      // Provide helpful error message with available operation IDs
       const availableIds = endpoints
         .filter(ep => ep.operationId)
         .map(ep => ep.operationId)
@@ -247,14 +254,14 @@ export class OpenAPIResource extends BaseResourceModule {
       .command(this.name)
       .description('OpenAPI specification tools')
 
-    // Add list subcommand
+    // Add list-operations subcommand
     openapiCmd
-      .command('list <uri>')
-      .description('List OpenAPI endpoints from the specified URI')
+      .command('list-operations <uri>')
+      .description('List all API operations from the specified OpenAPI URI')
       .allowExcessArguments(false)
       .action(async (uri: string) => {
         try {
-          const results = await this.list(uri)
+          const results = await this.listOperations(uri)
           console.log(results)
         } catch (error) {
           console.error(`Error listing ${this.name}:`, error)
@@ -269,7 +276,7 @@ export class OpenAPIResource extends BaseResourceModule {
       .allowExcessArguments(false)
       .action(async (uri: string, operationId: string) => {
         try {
-          const result = await this.show(uri, operationId)
+          const result = await this.getOperation(uri, operationId)
           console.log(result)
         } catch (error) {
           console.error(`Error getting ${this.name} operation:`, error)
