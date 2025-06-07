@@ -173,7 +173,7 @@ export class IconsResource extends BaseResourceModule {
     }
   }
 
-  async show(id: string): Promise<string> {
+  async show(name: string): Promise<string> {
     this.ensureCacheDirectory()
 
     if (!this.isCacheWarmed()) {
@@ -183,6 +183,7 @@ export class IconsResource extends BaseResourceModule {
     }
 
     // Return empty for now as per requirements
+    // When implemented, this will show details for the icon with the given name
     return ''
   }
 
@@ -217,12 +218,12 @@ export class IconsResource extends BaseResourceModule {
 
     // Add show subcommand
     lucidCmd
-      .command('show <id>')
-      .description('Show details for a specific Lucide icon')
+      .command('show <name>')
+      .description('Show details for a specific Lucide icon by name')
       .allowExcessArguments(false)
-      .action(async (id: string) => {
+      .action(async (name: string) => {
         try {
-          const result = await this.show(id)
+          const result = await this.show(name)
           if (result) {
             console.log(result)
           }
