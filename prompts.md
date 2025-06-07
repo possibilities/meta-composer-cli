@@ -726,3 +726,25 @@ src/resources/modules/icons.ts: console.error(`Error listing ${this.name} icon n
 src/resources/modules/icons.ts: description: 'List all Lucide icon names',
 
 Don't update @prompts.md
+
+## 28
+
+The help text for subcommands should show the subcommand.
+
+For example this is how it looks now:
+
+```
+Subcommands for shadcn:
+
+  list-components               List all shadcn UI components
+  get-component-by-name <name>  Get details for a specific shadcn component by name
+```
+
+And this is how it should look:
+
+```
+Subcommands for shadcn:
+
+  shadcn list-components               List all shadcn UI components
+  shadcn get-component-by-name <name>  Get details for a specific shadcn component by name
+```
