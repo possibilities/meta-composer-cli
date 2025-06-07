@@ -1,3 +1,11 @@
+# Prompt history
+
+A manually curated prompt history for every commit in the project
+
+- Each new decimal step started with a new chat
+- Plan mode was always accepted or discarded, unless otherwise noted
+- No Claude.md or other external context other than prompting to read specific files
+
 ## 1 [plan mode]
 
 We're making a CLI with typescript and commander JS. It is called `meta-composer`
