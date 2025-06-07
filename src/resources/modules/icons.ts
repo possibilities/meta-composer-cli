@@ -11,11 +11,10 @@ import { join } from 'path'
 import { homedir } from 'os'
 import * as yaml from 'js-yaml'
 import { Command } from 'commander'
-import { z } from 'zod'
 
-// Define the type enum schema
-const IconListTypeSchema = z.enum(['icons', 'tags', 'categories'])
-type IconListType = z.infer<typeof IconListTypeSchema>
+// Define types for list and show operations
+type ListType = 'names' | 'categories' | 'tags'
+type ShowType = 'category' | 'tag'
 
 interface IconMetadata {
   name: string
@@ -130,11 +129,11 @@ export class IconsResource extends BaseResourceModule {
   }
 
   /**
-   * List Lucide icons, tags, or categories
-   * @param type - The type of data to list ('icons', 'tags', or 'categories')
-   * @returns A list of items separated by newlines
+   * List Lucide icon names, categories, or tags
+   * @param listType - The type of data to list ('names', 'categories', or 'tags')
+   * @returns A formatted list of items
    */
-  async listIcons(type: IconListType): Promise<string> {
+  async list(listType: ListType): Promise<string> {
     this.ensureCacheDirectory()
 
     if (!this.isCacheWarmed()) {
@@ -149,9 +148,9 @@ export class IconsResource extends BaseResourceModule {
     )
     const iconsData = yaml.load(yamlContent) as IconMetadata[]
 
-    // Extract based on type
-    switch (type) {
-      case 'icons':
+    // Extract based on listType
+    switch (listType) {
+      case 'names':
         return iconsData.map(icon => `- ${icon.name}`).join('\n')
 
       case 'tags': {
@@ -179,65 +178,134 @@ export class IconsResource extends BaseResourceModule {
   }
 
   /**
-   * Get details for a specific Lucide icon
-   * @param name - The icon name
-   * @returns Icon details (currently empty, placeholder for future implementation)
+   * Get icons by category or tag
+   * @param showType - Filter type ('category' or 'tag')
+   * @param filterValue - The category or tag value to filter by
+   * @returns A formatted list of matching icons
    */
-  async getIcon(name: string): Promise<string> {
+  async show(showType: ShowType, filterValue: string): Promise<string> {
     this.ensureCacheDirectory()
 
     if (!this.isCacheWarmed()) {
-      throw new Error(
-        'Cache is not warmed. Please run "lucid list-icons icons" first to warm the cache.',
-      )
+      console.log('Cache is not warmed. Warming cache now...')
+      this.warmCache()
     }
 
-    // Placeholder for future implementation
-    return ''
+    // Load metadata
+    const yamlContent = readFileSync(
+      join(this.metadataDir, 'icons.yaml'),
+      'utf-8',
+    )
+    const iconsData = yaml.load(yamlContent) as IconMetadata[]
+
+    // Filter icons based on showType and filterValue
+    let matchingIcons: string[] = []
+
+    switch (showType) {
+      case 'category':
+        matchingIcons = iconsData
+          .filter(icon => icon.categories?.includes(filterValue))
+          .map(icon => icon.name)
+        break
+      case 'tag':
+        matchingIcons = iconsData
+          .filter(icon => icon.tags?.includes(filterValue))
+          .map(icon => icon.name)
+        break
+    }
+
+    if (matchingIcons.length === 0) {
+      return `No icons found for ${showType}: ${filterValue}`
+    }
+
+    return matchingIcons.map(name => `- ${name}`).join('\n')
   }
 
   registerCommands(program: Command): void {
     // Create lucid command
     const lucidCmd = program.command(this.name).description('Lucide icons')
 
-    // Add list-icons subcommand
+    // Add list-icon-names subcommand
     lucidCmd
-      .command('list-icons <type>')
-      .description('List Lucide icons, tags, or categories')
+      .command('list-icon-names')
+      .description('List all Lucide icon names')
       .allowExcessArguments(false)
-      .action(async (type: string) => {
+      .action(async () => {
         try {
-          // Validate type using Zod
-          const validatedType = IconListTypeSchema.parse(type)
-          const results = await this.listIcons(validatedType)
+          const results = await this.list('names')
           if (results) {
             console.log(results)
           }
         } catch (error) {
-          if (error instanceof z.ZodError) {
-            console.error(
-              `Error: Invalid type '${type}'. Must be one of: icons, tags, categories`,
-            )
-          } else {
-            console.error(`Error listing ${this.name} icons:`, error)
-          }
+          console.error(`Error listing ${this.name} icon names:`, error)
           process.exit(1)
         }
       })
 
-    // Add get-icon subcommand
+    // Add list-icon-categories subcommand
     lucidCmd
-      .command('get-icon <name>')
-      .description('Get details for a specific Lucide icon by name')
+      .command('list-icon-categories')
+      .description('List all Lucide icon categories')
       .allowExcessArguments(false)
-      .action(async (name: string) => {
+      .action(async () => {
         try {
-          const result = await this.getIcon(name)
+          const results = await this.list('categories')
+          if (results) {
+            console.log(results)
+          }
+        } catch (error) {
+          console.error(`Error listing ${this.name} icon categories:`, error)
+          process.exit(1)
+        }
+      })
+
+    // Add list-icon-tags subcommand
+    lucidCmd
+      .command('list-icon-tags')
+      .description('List all Lucide icon tags')
+      .allowExcessArguments(false)
+      .action(async () => {
+        try {
+          const results = await this.list('tags')
+          if (results) {
+            console.log(results)
+          }
+        } catch (error) {
+          console.error(`Error listing ${this.name} icon tags:`, error)
+          process.exit(1)
+        }
+      })
+
+    // Add get-icons-by-category subcommand
+    lucidCmd
+      .command('get-icons-by-category <category>')
+      .description('Get all icons that belong to a specific category')
+      .allowExcessArguments(false)
+      .action(async (category: string) => {
+        try {
+          const result = await this.show('category', category)
           if (result) {
             console.log(result)
           }
         } catch (error) {
-          console.error(`Error getting ${this.name} icon:`, error)
+          console.error(`Error getting ${this.name} icons by category:`, error)
+          process.exit(1)
+        }
+      })
+
+    // Add get-icons-by-tag subcommand
+    lucidCmd
+      .command('get-icons-by-tag <tag>')
+      .description('Get all icons that have a specific tag')
+      .allowExcessArguments(false)
+      .action(async (tag: string) => {
+        try {
+          const result = await this.show('tag', tag)
+          if (result) {
+            console.log(result)
+          }
+        } catch (error) {
+          console.error(`Error getting ${this.name} icons by tag:`, error)
           process.exit(1)
         }
       })

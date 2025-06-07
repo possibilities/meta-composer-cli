@@ -545,3 +545,25 @@ Is there any extraneous, non-essential comments added?
 Does the structure make sense since we changed the way the commands are phrased and composed.
 
 Go through all the code and the diff since the aforementioned commit and do any cleanup or maintenence that would be useful.
+
+## 24 [plan mode]
+
+We are going to change the signature of the lucid commands and add to the business logic.
+
+Curently the signature for lucid commands is:
+
+list-icons <type>
+get-icon <name>
+
+Change it to
+
+list-icon-names
+list-icon-categories
+list-icon-tags
+
+get-icons-by-category
+get-icons-by-tag
+
+For the list commands we are moving from having a <type> to having a command for each type. "icons" become "names" in the new approach.
+
+For the get commands we are either getting list of icons based on the tags or categories they are associated with in the metadata.
