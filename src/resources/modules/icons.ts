@@ -129,7 +129,7 @@ export class IconsResource extends BaseResourceModule {
   }
 
   /**
-   * List Lucide icon names, categories, or tags
+   * List Lucide icons, categories, or tags
    * @param listType - The type of data to list ('names', 'categories', or 'tags')
    * @returns A formatted list of items
    */
@@ -225,10 +225,10 @@ export class IconsResource extends BaseResourceModule {
     // Create lucid command
     const lucidCmd = program.command(this.name).description('Lucide icons')
 
-    // Add list-icon-names subcommand
+    // Add list-icons subcommand
     lucidCmd
-      .command('list-icon-names')
-      .description('List all Lucide icon names')
+      .command('list-icons')
+      .description('List all Lucide icons')
       .allowExcessArguments(false)
       .action(async () => {
         try {
@@ -237,7 +237,7 @@ export class IconsResource extends BaseResourceModule {
             console.log(results)
           }
         } catch (error) {
-          console.error(`Error listing ${this.name} icon names:`, error)
+          console.error(`Error listing ${this.name} icons:`, error)
           process.exit(1)
         }
       })
@@ -314,8 +314,8 @@ export class IconsResource extends BaseResourceModule {
   getCommandInfo(): CommandInfo[] {
     return [
       {
-        name: 'list-icon-names',
-        description: 'List all Lucide icon names',
+        name: 'list-icons',
+        description: 'List all Lucide icons',
       },
       {
         name: 'list-icon-categories',
