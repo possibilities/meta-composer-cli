@@ -221,6 +221,33 @@ export class IconsResource extends BaseResourceModule {
     return matchingIcons.map(name => `- ${name}`).join('\n')
   }
 
+  /**
+   * Read the documentation page for lucid icon usage in React
+   * @returns The lucide-react.md documentation content
+   */
+  async readAboutReactUsage(): Promise<string> {
+    this.ensureCacheDirectory()
+
+    if (!existsSync(this.repoDir)) {
+      console.log('Lucide repository not found. Warming cache now...')
+      this.warmCache()
+    }
+
+    const reactDocsPath = join(
+      this.repoDir,
+      'docs/guide/packages/lucide-react.md',
+    )
+
+    if (existsSync(reactDocsPath)) {
+      const content = readFileSync(reactDocsPath, 'utf-8')
+      return content.trim()
+    } else {
+      throw new Error(
+        'React usage documentation not found. Please ensure the Lucide repository is cloned.',
+      )
+    }
+  }
+
   registerCommands(program: Command): void {
     // Create lucid command
     const lucidCmd = program.command(this.name).description('Lucide icons')
@@ -309,6 +336,21 @@ export class IconsResource extends BaseResourceModule {
           process.exit(1)
         }
       })
+
+    // Add read-about-react-usage subcommand
+    lucidCmd
+      .command('read-about-react-usage')
+      .description('The documentation page for lucid icon usage in React')
+      .allowExcessArguments(false)
+      .action(async () => {
+        try {
+          const result = await this.readAboutReactUsage()
+          console.log(result)
+        } catch (error) {
+          console.error(`Error reading React usage documentation:`, error)
+          process.exit(1)
+        }
+      })
   }
 
   getCommandInfo(): CommandInfo[] {
@@ -334,6 +376,10 @@ export class IconsResource extends BaseResourceModule {
         name: 'get-icons-by-tag',
         description: 'Get all icons that have a specific tag',
         arguments: ['<tag>'],
+      },
+      {
+        name: 'read-about-react-usage',
+        description: 'The documentation page for lucid icon usage in React',
       },
     ]
   }

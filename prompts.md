@@ -871,12 +871,13 @@ meta-composer shadcn read-about-typography         The documentation page for sh
 Look closely at the build process and the process of extracting the info for the existing list and get subcommands. If you use the markdown for the typography page as-is it doesn't have examples inlined, etc. Instead it needs a replacement process done that we currently do for each component for building the list and get commands return data.
 
 Typography is one of the components that shows up on the list of components and can get gotten by name. Let's add conditional logic so it is no longer on the list or gettable. Then make it the content available via the read-about-typography subcommand
-
 ````
 
 ## 29.1
 
+```
 Filter "typography" out of the components list when calling `shadcn list-components`
+```
 
 ## 29.2 [plan mode]
 
@@ -889,3 +890,11 @@ meta-composer shadcn read-about-theming         The documentation page for shadc
 
 From our previous conversation and your research we learned that that the typography document went through a complicated process to have placeholders replaced with example/code content. In the case of typography we didn't have to do anything about it because the typography document gets processed along with other components. The theming document is different in that it 1. we need to locate it, it is not found with the component and 2. we need to do the replacement logic like we do on component mdx documents. No. 2 should be added to the cache warming process along with processing components mdx.
 ````
+
+## 29.2
+
+Add new subcommand to lucid:
+
+meta-composer lucid read-about-react-usage The documentation page for lucid icon usage in React
+
+Look through the lucid cache and find the md at docs/guide/packages/lucide-react.md. It should be able to able to be used directly as the response to the `read-about-react-usage` subcommand

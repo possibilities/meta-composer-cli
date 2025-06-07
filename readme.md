@@ -26,15 +26,15 @@ Options:
   -h, --help      display help for command
 
 Commands:
-  shadcn          shadcn UI components
+  shadcn          shadcn/ui components
   openapi         OpenAPI specifications
   lucid           Lucide icons
   help [command]  display help for command
 
 Subcommands for shadcn:
 
-  meta-composer shadcn list-components               List all shadcn UI components
-  meta-composer shadcn get-component-by-name <name>  Get details for a specific shadcn component by name
+  meta-composer shadcn list-components               List all shadcn/ui components
+  meta-composer shadcn get-component-by-name <name>  Get details for a specific shadcn/ui component by name
   meta-composer shadcn read-about-typography         The documentation page for shadcn/ui typography
   meta-composer shadcn read-about-theming            The documentation page for shadcn/ui theming
 
@@ -50,4 +50,5 @@ Subcommands for lucid:
   meta-composer lucid list-icon-tags                    List all Lucide icon tags
   meta-composer lucid get-icons-by-category <category>  Get all icons that belong to a specific category
   meta-composer lucid get-icons-by-tag <tag>            Get all icons that have a specific tag
+  meta-composer lucid read-about-react-usage            The documentation page for lucid icon usage in React
 ```
