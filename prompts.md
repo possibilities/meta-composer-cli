@@ -482,3 +482,17 @@ That means that the shadcn list command should use the name of the component (wh
 That also means that the shadcn show command should change from having an <id> to an <name> that can be used to correlate the listed components found in `shadcn list` with the corresponding detail document.
 
 Update any comments, code, or documentation related to this.
+
+## 23.4
+
+In the lucid resource I want to change "id" everywhere to "name"
+
+That means that the lucid list command should use the name of the icon (which should be found in the cached data we read from) rather than creating ids
+
+That also means that the lucid show command should change from having an <id> to an <name> that can be used to correlate the listed icon found in `lucid list` with the corresponding detail document when calling `lucid show` (when we implement that, which we aren't doing right now)
+
+Update any comments, code, or documentation related to this.
+
+## 23.5 [plan mode]
+
+Show a summary of all the commands as they exist now
