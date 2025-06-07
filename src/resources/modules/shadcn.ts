@@ -411,6 +411,31 @@ export class ShadcnResource extends BaseResourceModule {
     }
   }
 
+  /**
+   * Read the documentation page for shadcn/ui typography
+   * @returns The typography MDX documentation with examples inlined
+   */
+  async readAboutTypography(): Promise<string> {
+    this.ensureCacheDirectory()
+
+    if (!this.isCacheWarmed()) {
+      throw new Error(
+        'Cache is not warmed. Please run "shadcn list-components" first to warm the cache.',
+      )
+    }
+
+    const filePath = join(this.processedDir, 'typography.mdx')
+
+    if (existsSync(filePath)) {
+      const content = readFileSync(filePath, 'utf-8')
+      return content.trim()
+    } else {
+      throw new Error(
+        'Typography documentation not found. Please run "shadcn list-components" first to warm the cache.',
+      )
+    }
+  }
+
   registerCommands(program: Command): void {
     // Create shadcn command
     const shadcnCmd = program
@@ -446,6 +471,21 @@ export class ShadcnResource extends BaseResourceModule {
           process.exit(1)
         }
       })
+
+    // Add read-about-typography subcommand
+    shadcnCmd
+      .command('read-about-typography')
+      .description('The documentation page for shadcn/ui typography')
+      .allowExcessArguments(false)
+      .action(async () => {
+        try {
+          const result = await this.readAboutTypography()
+          console.log(result)
+        } catch (error) {
+          console.error(`Error reading typography documentation:`, error)
+          process.exit(1)
+        }
+      })
   }
 
   getCommandInfo(): CommandInfo[] {
@@ -458,6 +498,10 @@ export class ShadcnResource extends BaseResourceModule {
         name: 'get-component-by-name',
         description: 'Get details for a specific shadcn component by name',
         arguments: ['<name>'],
+      },
+      {
+        name: 'read-about-typography',
+        description: 'The documentation page for shadcn/ui typography',
       },
     ]
   }

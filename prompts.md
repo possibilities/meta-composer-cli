@@ -858,3 +858,18 @@ Subcommands for shadcn:
   shadcn get-component-by-name <name>  Get details for a specific shadcn component by name
 ```
 ````
+
+## 29 [plan mode]
+
+````
+Add new subcommand for shadcn:
+
+```
+meta-composer shadcn read-about-typography         The documentation page for shadcn/ui typography
+```
+
+Look closely at the build process and the process of extracting the info for the existing list and get subcommands. If you use the markdown for the typography page as-is it doesn't have examples inlined, etc. Instead it needs a replacement process done that we currently do for each component for building the list and get commands return data.
+
+Typography is one of the components that shows up on the list of components and can get gotten by name. Let's add conditional logic so it is no longer on the list or gettable. Then make it the content available via the read-about-typography subcommand
+
+````
