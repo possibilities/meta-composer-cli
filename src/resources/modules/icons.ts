@@ -178,7 +178,7 @@ export class IconsResource extends BaseResourceModule {
   }
 
   /**
-   * Get icons by category or tag
+   * List icons by category or tag
    * @param showType - Filter type ('category' or 'tag')
    * @param filterValue - The category or tag value to filter by
    * @returns A formatted list of matching icons
@@ -303,10 +303,10 @@ export class IconsResource extends BaseResourceModule {
         }
       })
 
-    // Add get-icons-by-category subcommand
+    // Add list-icons-for-category subcommand
     lucidCmd
-      .command('get-icons-by-category <category>')
-      .description('Get all icons that belong to a specific category')
+      .command('list-icons-for-category <category>')
+      .description('List all Lucide icons that belong to a specific category')
       .allowExcessArguments(false)
       .action(async (category: string) => {
         try {
@@ -315,15 +315,15 @@ export class IconsResource extends BaseResourceModule {
             console.log(result)
           }
         } catch (error) {
-          console.error(`Error getting ${this.name} icons by category:`, error)
+          console.error(`Error listing ${this.name} icons for category:`, error)
           process.exit(1)
         }
       })
 
-    // Add get-icons-by-tag subcommand
+    // Add list-icons-for-tag subcommand
     lucidCmd
-      .command('get-icons-by-tag <tag>')
-      .description('Get all icons that have a specific tag')
+      .command('list-icons-for-tag <tag>')
+      .description('List all Lucide icons that have a specific tag')
       .allowExcessArguments(false)
       .action(async (tag: string) => {
         try {
@@ -332,7 +332,7 @@ export class IconsResource extends BaseResourceModule {
             console.log(result)
           }
         } catch (error) {
-          console.error(`Error getting ${this.name} icons by tag:`, error)
+          console.error(`Error listing ${this.name} icons for tag:`, error)
           process.exit(1)
         }
       })
@@ -368,13 +368,13 @@ export class IconsResource extends BaseResourceModule {
         description: 'List all Lucide icon tags',
       },
       {
-        name: 'get-icons-by-category',
-        description: 'Get all icons that belong to a specific category',
+        name: 'list-icons-for-category',
+        description: 'List all Lucide icons that belong to a specific category',
         arguments: ['<category>'],
       },
       {
-        name: 'get-icons-by-tag',
-        description: 'Get all icons that have a specific tag',
+        name: 'list-icons-for-tag',
+        description: 'List all Lucide icons that have a specific tag',
         arguments: ['<tag>'],
       },
       {
