@@ -1,4 +1,4 @@
-import { BaseResourceModule } from '../base.js'
+import { BaseResourceModule, CommandInfo } from '../base.js'
 import { execSync } from 'child_process'
 import {
   existsSync,
@@ -309,5 +309,32 @@ export class IconsResource extends BaseResourceModule {
           process.exit(1)
         }
       })
+  }
+
+  getCommandInfo(): CommandInfo[] {
+    return [
+      {
+        name: 'list-icon-names',
+        description: 'List all Lucide icon names',
+      },
+      {
+        name: 'list-icon-categories',
+        description: 'List all Lucide icon categories',
+      },
+      {
+        name: 'list-icon-tags',
+        description: 'List all Lucide icon tags',
+      },
+      {
+        name: 'get-icons-by-category',
+        description: 'Get all icons that belong to a specific category',
+        arguments: ['<category>'],
+      },
+      {
+        name: 'get-icons-by-tag',
+        description: 'Get all icons that have a specific tag',
+        arguments: ['<tag>'],
+      },
+    ]
   }
 }

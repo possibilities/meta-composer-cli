@@ -1,4 +1,4 @@
-import { BaseResourceModule } from '../base.js'
+import { BaseResourceModule, CommandInfo } from '../base.js'
 import { execSync } from 'child_process'
 import {
   existsSync,
@@ -446,5 +446,19 @@ export class ShadcnResource extends BaseResourceModule {
           process.exit(1)
         }
       })
+  }
+
+  getCommandInfo(): CommandInfo[] {
+    return [
+      {
+        name: 'list-components',
+        description: 'List all shadcn UI components',
+      },
+      {
+        name: 'get-component',
+        description: 'Get details for a specific shadcn component by name',
+        arguments: ['<name>'],
+      },
+    ]
   }
 }

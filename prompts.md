@@ -567,3 +567,147 @@ get-icons-by-tag
 For the list commands we are moving from having a <type> to having a command for each type. "icons" become "names" in the new approach.
 
 For the get commands we are either getting list of icons based on the tags or categories they are associated with in the metadata.
+
+## 25
+
+When the root level command is called with `--help`, e.g. `meta-composer --help`, show all of the subcommands for each resource type:
+
+Currently the top level command looks like this:
+
+```
+▶ ./dist/cli.js --help
+Usage: meta-composer [options] [command]
+
+A tool for composing and traversing arbitrary information
+
+Installed modules:
+  shadcn
+  openapi
+  lucid
+
+Options:
+  -V, --version   output the version number
+  -h, --help      display help for command
+
+Commands:
+  shadcn          shadcn UI components
+  openapi         OpenAPI specification tools
+  lucid           Lucide icons
+  help [command]  display help for command
+```
+
+And the three sub commands look like this:
+
+```
+▶ ./dist/cli.js shadcn --help
+Usage: meta-composer shadcn [options] [command]
+
+shadcn UI components
+
+Options:
+  -h, --help            display help for command
+
+Commands:
+  list-components       List all shadcn UI components
+  get-component <name>  Get details for a specific shadcn component by name
+  help [command]        display help for command
+```
+
+```
+▶ ./dist/cli.js lucid --help
+Usage: meta-composer lucid [options] [command]
+
+Lucide icons
+
+Options:
+  -h, --help                        display help for command
+
+Commands:
+  list-icon-names                   List all Lucide icon names
+  list-icon-categories              List all Lucide icon categories
+  list-icon-tags                    List all Lucide icon tags
+  get-icons-by-category <category>  Get all icons that belong to a specific category
+  get-icons-by-tag <tag>            Get all icons that have a specific tag
+  help [command]                    display help for command
+```
+
+```
+▶ ./dist/cli.js openapi --help
+Usage: meta-composer openapi [options] [command]
+
+OpenAPI specification tools
+
+Options:
+  -h, --help                          display help for command
+
+Commands:
+  list-operations <uri>               List all API operations from the specified OpenAPI URI
+  get-operation <uri> <operation-id>  Get details for a specific API operation by operation ID
+  help [command]                      display help for command
+```
+
+For the rool level command I want to show all of the subcommands, e.g:
+
+```
+▶ ./dist/cli.js --help
+Usage: meta-composer [options] [command]
+
+A tool for composing and traversing arbitrary information
+
+Installed modules:
+  shadcn
+  openapi
+  lucid
+
+Options:
+  -V, --version   output the version number
+  -h, --help      display help for command
+
+Commands:
+  shadcn          shadcn UI components
+  openapi         OpenAPI specification tools
+  lucid           Lucide icons
+  help [command]  display help for command
+
+Subcommands for lucid:
+  list-icon-names                   List all Lucide icon names
+  list-icon-categories              List all Lucide icon categories
+  list-icon-tags                    List all Lucide icon tags
+  get-icons-by-category <category>  Get all icons that belong to a specific category
+  get-icons-by-tag <tag>            Get all icons that have a specific tag
+
+Subcommands for openapi:
+  [...snip...]
+```
+
+What's the best way to accomplish this? Ideally we don't have two (or more) copies of the subcommands and descriptions stores across the repo (i.e. can there comfortably be a single source of truth).
+
+## 25.1
+
+The formatting is still not good
+
+## 25.2
+
+We can remove installed modules from the output now
+
+## 25.3
+
+Can we clean up based on the current changes we made? Feel free to remove any non-critical comment too.
+
+`git diff HEAD`
+
+## 25.4 [interrupted]
+
+Wait don't touch prompts.md. Don't update, change or delete it.
+
+## 26
+
+Rename
+
+`openapi get-operation <uri> <operation-id>`
+`shadcn get-component <name>`
+
+To
+
+`openapi get-operation-by-id <uri> <operation-id>`
+`shadcn get-component-by-name <name>`
