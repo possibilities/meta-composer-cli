@@ -1,5 +1,6 @@
 import { Command } from 'commander'
 import { registry } from '../resources/index.js'
+import packageJson from '../../package.json' assert { type: 'json' }
 
 export function createProgram(): Command {
   const program = new Command()
@@ -7,7 +8,7 @@ export function createProgram(): Command {
   program
     .name('meta-composer')
     .description('A tool for composing and traversing arbitrary information')
-    .version('0.1.0')
+    .version(packageJson.version)
 
   program.configureHelp({
     formatHelp: (cmd, helper) => {
