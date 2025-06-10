@@ -392,7 +392,9 @@ export function registerNvimCommands(program: Command): void {
 
   nvimCmd
     .command('get-info')
-    .description('Get Neovim configuration and plugin information')
+    .description(
+      'Retrieve configuration and plugin information from running Neovim instances',
+    )
     .allowExcessArguments(false)
     .action(async () => {
       try {
@@ -411,7 +413,7 @@ export const nvimModule = {
   instructions: `Neovim integration for meta-composer
 The following commands interact with Neovim instances:
 
-- Use \`get-info\` to retrieve configuration and plugin information from running Neovim instances
+Instructions:
 - Automatically detects Neovim instances through process scanning
 - Connects to Neovim's RPC interface to gather current buffer information
 - Provides details about the current file, cursor position, and visual selections
