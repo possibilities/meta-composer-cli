@@ -41,6 +41,66 @@ async function getInfo(): Promise<string> {
           encoding: 'utf8',
         }).trim()
 
+      const pid = parseInt(getPaneInfo('#{pane_pid}'))
+      const currentCommand = getPaneInfo('#{pane_current_command}')
+      let fullCommand = currentCommand
+
+      try {
+        // Get the process tree to find the actual command
+        const psTree = execSync(
+          `ps -eo pid,ppid,args | grep -E "^\\s*(${pid}|[0-9]+\\s+${pid})" | grep -v grep`,
+          {
+            encoding: 'utf8',
+          },
+        )
+          .trim()
+          .split('\n')
+
+        // Find the process that matches the current_command
+        for (const line of psTree) {
+          const parts = line.trim().split(/\s+/)
+          if (parts.length >= 3) {
+            const [procPid, parentPid, ...cmdParts] = parts
+            const cmd = cmdParts.join(' ')
+
+            // Check if this command matches the current_command
+            if (
+              cmd.includes(currentCommand) &&
+              !cmd.includes('zsh') &&
+              !cmd.includes('bash') &&
+              !cmd.includes('sh ')
+            ) {
+              fullCommand = cmd
+              break
+            }
+          }
+        }
+
+        // If we still haven't found it, try to get the command for any child process
+        if (fullCommand === currentCommand) {
+          const children = execSync(`pgrep -P ${pid}`, { encoding: 'utf8' })
+            .trim()
+            .split('\n')
+            .filter(Boolean)
+
+          for (const childPid of children) {
+            try {
+              const childCmd = execSync(`ps -p ${childPid} -o args=`, {
+                encoding: 'utf8',
+              }).trim()
+              if (childCmd && childCmd.includes(currentCommand)) {
+                fullCommand = childCmd
+                break
+              }
+            } catch {
+              // Continue to next child
+            }
+          }
+        }
+      } catch {
+        // Keep the basic command if we can't get the full command line
+      }
+
       return {
         id: paneId,
         index: getPaneInfo('#{pane_index}'),
@@ -49,7 +109,8 @@ async function getInfo(): Promise<string> {
         height: parseInt(getPaneInfo('#{pane_height}')),
         current_path: getPaneInfo('#{pane_current_path}'),
         current_command: getPaneInfo('#{pane_current_command}'),
-        pid: parseInt(getPaneInfo('#{pane_pid}')),
+        full_command: fullCommand,
+        pid: pid,
         tty: getPaneInfo('#{pane_tty}'),
         active: getPaneInfo('#{pane_active}') === '1',
         synchronized: getPaneInfo('#{pane_synchronized}') === '1',
