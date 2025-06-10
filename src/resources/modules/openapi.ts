@@ -264,4 +264,9 @@ export function registerOpenAPICommands(program: Command): void {
 export const openAPIModule = {
   name: 'openapi',
   registerCommands: registerOpenAPICommands,
+  instructions: `OpenAPI is a specification for describing APIs
+The following commands expose all API specification information:
+
+- Use \`list-operations <uri>\` with a valid OpenAPI spec in JSON format to get a list of every operation with some minimal metadata for each
+- Use \`get-operation-by-id <uri> <operation-id>\` to get detailed information for a path`,
 }

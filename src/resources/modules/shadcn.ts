@@ -530,4 +530,15 @@ export function registerShadcnCommands(program: Command): void {
 export const shadcnModule = {
   name: 'shadcn',
   registerCommands: registerShadcnCommands,
+  instructions: `Shadcn/ui component library for React is a high quality, themable, components and blocks for building beautiful UIs with a great UX
+The following commands find information about available components in addition to installing and using them:
+
+- Use \`list-components\` for a full list of names and descriptions of every component in the library
+- Use \`get-component-by-name\` to fetch full documentation, usage, examples, and installation instructions by name
+- Use \`read-about-theming\` to read about theming and for a full list of variables that are available
+- Use \`read-about-typography\` to read about using typography
+- When using and creating components, use theme variables that shadcn exposes rather than adding our own styles
+- Select from the library components rather than writing your own
+- Build up more complicated components from existing components, blocks, and examples
+- Use the installation instructions found in each components' documentation to add it to the project`,
 }
