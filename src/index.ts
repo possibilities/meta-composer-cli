@@ -3,12 +3,16 @@ import { registry } from './resources/index.js'
 import { ShadcnResource } from './resources/modules/shadcn.js'
 import { OpenAPIResource } from './resources/modules/openapi.js'
 import { IconsResource } from './resources/modules/icons.js'
+import { NvimResource } from './resources/modules/nvim.js'
+import { TmuxResource } from './resources/modules/tmux.js'
 
 export async function main() {
   // Register available resources
   registry.register(new ShadcnResource())
   registry.register(new OpenAPIResource())
   registry.register(new IconsResource())
+  registry.register(new NvimResource())
+  registry.register(new TmuxResource())
 
   const program = createProgram()
 
