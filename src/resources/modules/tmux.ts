@@ -28,53 +28,35 @@ async function getInfo(): Promise<string> {
   }
 
   try {
-    const paneId = execSync('tmux display-message -p "#{pane_id}"', {
+    const paneList = execSync('tmux list-panes -F "#{pane_id}"', {
       encoding: 'utf8',
-    }).trim()
-    info.pane = {
-      id: paneId,
-      index: execSync('tmux display-message -p "#{pane_index}"', {
-        encoding: 'utf8',
-      }).trim(),
-      title: execSync('tmux display-message -p "#{pane_title}"', {
-        encoding: 'utf8',
-      }).trim(),
-      width: parseInt(
-        execSync('tmux display-message -p "#{pane_width}"', {
+    })
+      .trim()
+      .split('\n')
+      .filter(Boolean)
+
+    info.panes = paneList.map(paneId => {
+      const getPaneInfo = (format: string) =>
+        execSync(`tmux display-message -t ${paneId} -p "${format}"`, {
           encoding: 'utf8',
-        }).trim(),
-      ),
-      height: parseInt(
-        execSync('tmux display-message -p "#{pane_height}"', {
-          encoding: 'utf8',
-        }).trim(),
-      ),
-      current_path: execSync('tmux display-message -p "#{pane_current_path}"', {
-        encoding: 'utf8',
-      }).trim(),
-      current_command: execSync(
-        'tmux display-message -p "#{pane_current_command}"',
-        { encoding: 'utf8' },
-      ).trim(),
-      pid: parseInt(
-        execSync('tmux display-message -p "#{pane_pid}"', {
-          encoding: 'utf8',
-        }).trim(),
-      ),
-      tty: execSync('tmux display-message -p "#{pane_tty}"', {
-        encoding: 'utf8',
-      }).trim(),
-      active:
-        execSync('tmux display-message -p "#{pane_active}"', {
-          encoding: 'utf8',
-        }).trim() === '1',
-      synchronized:
-        execSync('tmux display-message -p "#{pane_synchronized}"', {
-          encoding: 'utf8',
-        }).trim() === '1',
-    }
+        }).trim()
+
+      return {
+        id: paneId,
+        index: getPaneInfo('#{pane_index}'),
+        title: getPaneInfo('#{pane_title}'),
+        width: parseInt(getPaneInfo('#{pane_width}')),
+        height: parseInt(getPaneInfo('#{pane_height}')),
+        current_path: getPaneInfo('#{pane_current_path}'),
+        current_command: getPaneInfo('#{pane_current_command}'),
+        pid: parseInt(getPaneInfo('#{pane_pid}')),
+        tty: getPaneInfo('#{pane_tty}'),
+        active: getPaneInfo('#{pane_active}') === '1',
+        synchronized: getPaneInfo('#{pane_synchronized}') === '1',
+      }
+    })
   } catch (error) {
-    info.pane = { error: 'Failed to get pane information' }
+    info.panes = [{ error: 'Failed to get pane information' }]
   }
 
   try {
