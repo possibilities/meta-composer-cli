@@ -242,7 +242,7 @@ export function registerTmuxCommands(program: Command): void {
 
   tmuxCmd
     .command('get-info')
-    .description('Get tmux configuration and session information')
+    .description('Retrieve configuration and session information from tmux')
     .allowExcessArguments(false)
     .action(async () => {
       try {
@@ -261,7 +261,6 @@ export const tmuxModule = {
   instructions: `Tmux integration for meta-composer
 The following commands interact with tmux sessions:
 
-- Use \`get-info\` to retrieve configuration and session information from tmux
 - Detects if running inside a tmux session and provides context
 - Lists all active tmux sessions with window and pane information
 - Shows detailed information about the current pane including running processes

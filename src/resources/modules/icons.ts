@@ -208,7 +208,9 @@ export function registerLucidCommands(program: Command): void {
 
   lucidCmd
     .command('list-icons')
-    .description('List all Lucide icons')
+    .description(
+      "Full list of every icon name. It's a large list (~8000 tokens)",
+    )
     .allowExcessArguments(false)
     .action(async () => {
       try {
@@ -224,7 +226,9 @@ export function registerLucidCommands(program: Command): void {
 
   lucidCmd
     .command('list-icon-categories')
-    .description('List all Lucide icon categories')
+    .description(
+      "Full list of every icon category. It's a small list (~130 tokens)",
+    )
     .allowExcessArguments(false)
     .action(async () => {
       try {
@@ -240,7 +244,9 @@ export function registerLucidCommands(program: Command): void {
 
   lucidCmd
     .command('list-icon-tags')
-    .description('List all Lucide icon tags')
+    .description(
+      "Full list of every icon tag. It's a large list (~11000 tokens)",
+    )
     .allowExcessArguments(false)
     .action(async () => {
       try {
@@ -256,7 +262,7 @@ export function registerLucidCommands(program: Command): void {
 
   lucidCmd
     .command('list-icons-for-category <category>')
-    .description('List all Lucide icons that belong to a specific category')
+    .description('List of the icons in a category')
     .allowExcessArguments(false)
     .action(async (category: string) => {
       try {
@@ -272,7 +278,7 @@ export function registerLucidCommands(program: Command): void {
 
   lucidCmd
     .command('list-icons-for-tag <tag>')
-    .description('List all Lucide icons that have a specific tag')
+    .description('List of icons that have a tag')
     .allowExcessArguments(false)
     .action(async (tag: string) => {
       try {
@@ -288,7 +294,7 @@ export function registerLucidCommands(program: Command): void {
 
   lucidCmd
     .command('read-about-react-usage')
-    .description('The documentation page for lucid icon usage in React')
+    .description('Read about how to install and use icons in React')
     .allowExcessArguments(false)
     .action(async () => {
       try {
@@ -307,11 +313,6 @@ export const lucidModule = {
   instructions: `Lucid icon library is a large, high quality icon collection for react
 The following commands find information about available icons in addition to installing and using them:
 
-- Use \`list-icons\` for a full list of every icon name. It's a large list (~8000 tokens)
-- Use \`list-icon-categories\` for a full list of every icon category. It's a small list (~130 tokens)
-- Use \`list-icon-tags\` for a full list of every icon tag. It's a large list (~11000 tokens)
-- Use \`list-icons-for-category\` for a list of the icons in a category
-- Use \`list-icons-for-tag\` for a list of icons that have a tag
-- Use \`read-about-react-usage\` to read about how to install and use icons in React
+Instructions:
 - When creating components that need icons use one or more of the various list methods to find a set of initial choices that can then be narrowed down`,
 }

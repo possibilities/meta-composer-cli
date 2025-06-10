@@ -234,7 +234,7 @@ export function registerOpenAPICommands(program: Command): void {
 
   openapiCmd
     .command('list-operations <uri>')
-    .description('List all API operations from the specified OpenAPI URI')
+    .description('List of every operation with minimal metadata for each')
     .allowExcessArguments(false)
     .action(async (uri: string) => {
       try {
@@ -248,7 +248,7 @@ export function registerOpenAPICommands(program: Command): void {
 
   openapiCmd
     .command('get-operation-by-id <uri> <operation-id>')
-    .description('Get details for a specific API operation by operation ID')
+    .description('Get detailed information for an operation by its ID')
     .allowExcessArguments(false)
     .action(async (uri: string, operationId: string) => {
       try {
@@ -264,9 +264,5 @@ export function registerOpenAPICommands(program: Command): void {
 export const openAPIModule = {
   name: 'openapi',
   registerCommands: registerOpenAPICommands,
-  instructions: `OpenAPI is a specification for describing APIs
-The following commands expose all API specification information:
-
-- Use \`list-operations <uri>\` with a valid OpenAPI spec in JSON format to get a list of every operation with some minimal metadata for each
-- Use \`get-operation-by-id <uri> <operation-id>\` to get detailed information for a path`,
+  instructions: `The following commands expose all OpenAPI specification information`,
 }

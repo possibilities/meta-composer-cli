@@ -66,12 +66,15 @@ export function createProgram(): Command {
         }
       }
 
-      const commandList = helper.visibleCommands(cmd).map(cmd => {
-        return formatItem(
-          helper.subcommandTerm(cmd),
-          helper.subcommandDescription(cmd),
-        )
-      })
+      const commandList = helper
+        .visibleCommands(cmd)
+        .filter(subCmd => subCmd.name() !== 'help') // Exclude help command
+        .map(cmd => {
+          return formatItem(
+            helper.subcommandTerm(cmd),
+            helper.subcommandDescription(cmd),
+          )
+        })
       if (commandList.length) {
         output.push('Commands:\n' + formatList(commandList) + '\n')
       }
