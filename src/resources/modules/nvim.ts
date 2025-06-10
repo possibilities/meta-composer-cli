@@ -429,8 +429,6 @@ export const nvimModule = {
 The following commands interact with Neovim instances:
 
 Instructions:
-- Automatically detects Neovim instances through process scanning
-- Connects to Neovim's RPC interface to gather current buffer information
 - Provides details about the current file, cursor position, and visual selections
-- Useful for integrating Neovim context into meta-composer workflows`,
+- Use this command any time I ask about my editor, vim, or nvim`,
 }
