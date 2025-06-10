@@ -72,12 +72,17 @@ async function getInfo(): Promise<string> {
                 const childCmd = execSync(`ps -p ${childPid} -o args=`, {
                   encoding: 'utf8',
                 }).trim()
-                if (
-                  childCmd &&
-                  (childCmd.includes('nvim') || childCmd.includes('vim'))
-                ) {
-                  fullCommand = childCmd
-                  break
+                if (childCmd && childCmd.includes(currentCommand)) {
+                  // Prefer commands with --listen for nvim/vim
+                  if (
+                    childCmd.includes('--listen') ||
+                    !fullCommand.includes('--listen')
+                  ) {
+                    fullCommand = childCmd
+                    if (childCmd.includes('--listen')) {
+                      break // Found the best match
+                    }
+                  }
                 }
               } catch {
                 continue
@@ -148,7 +153,7 @@ async function getInfo(): Promise<string> {
         const timeout = setTimeout(() => {
           socket.destroy()
           reject(new Error(`Connection timeout to socket: ${socketPath}`))
-        }, 2000)
+        }, 5000)
 
         socket.on('connect', () => {
           clearTimeout(timeout)
@@ -176,24 +181,37 @@ async function getInfo(): Promise<string> {
 
       // Handle incoming data
       socket.on('data', chunk => {
-        // Feed the chunk to the decoder
-        for (const msg of decoder.decodeMulti(chunk)) {
-          // msgpack-rpc format: [type, msgid, error, result]
-          if (Array.isArray(msg) && msg[0] === 1) {
-            // Response
-            const [, responseId, error, result] = msg
-            const handler = pendingRequests.get(responseId)
-            if (handler) {
-              pendingRequests.delete(responseId)
-              if (error) {
-                handler.reject(new Error(error))
-              } else {
-                handler.resolve(result)
+        try {
+          // Feed the chunk to the decoder
+          for (const msg of decoder.decodeMulti(chunk)) {
+            // msgpack-rpc format: [type, msgid, error, result]
+            if (Array.isArray(msg) && msg[0] === 1) {
+              // Response
+              const [, responseId, error, result] = msg
+              const handler = pendingRequests.get(responseId)
+              if (handler) {
+                pendingRequests.delete(responseId)
+                // Clear the timeout for this request
+                const timeout = timeouts.get(responseId)
+                if (timeout) {
+                  clearTimeout(timeout)
+                  timeouts.delete(responseId)
+                }
+                if (error) {
+                  handler.reject(new Error(error))
+                } else {
+                  handler.resolve(result)
+                }
               }
             }
           }
+        } catch (err) {
+          console.error('Error decoding msgpack:', err)
         }
       })
+
+      // Store timeouts so we can clear them
+      const timeouts = new Map<number, NodeJS.Timeout>()
 
       // Send request helper
       const sendRequest = (method: string, args: any[]): Promise<any> => {
@@ -206,19 +224,21 @@ async function getInfo(): Promise<string> {
           const encoded = encode(request)
           socket.write(Buffer.from(encoded))
 
-          // Timeout after 3 seconds
-          setTimeout(() => {
+          // Timeout after 5 seconds
+          const timeout = setTimeout(() => {
             if (pendingRequests.has(id)) {
               pendingRequests.delete(id)
+              timeouts.delete(id)
               reject(new Error(`Request timeout for method: ${method}`))
             }
-          }, 3000)
+          }, 5000)
+          timeouts.set(id, timeout)
         })
       }
 
       try {
         // Wait a bit for connection to stabilize
-        await new Promise(resolve => setTimeout(resolve, 50))
+        await new Promise(resolve => setTimeout(resolve, 200))
 
         // Get current buffer
         const bufferId = await sendRequest('nvim_get_current_buf', [])
@@ -290,8 +310,8 @@ async function getInfo(): Promise<string> {
               startLine > endLine ||
               (startLine === endLine && startCol > endCol)
             ) {
-              ;[startLine, endLine] = [endLine, startLine][(startCol, endCol)] =
-                [endCol, startCol]
+              ;[startLine, endLine] = [endLine, startLine]
+              ;[startCol, endCol] = [endCol, startCol]
             }
 
             // Get the selected lines
@@ -355,13 +375,24 @@ async function getInfo(): Promise<string> {
             }
           }
         } catch (error) {
-          // Ignore selection errors - might not have a selection
+          // Log selection errors for debugging
+          console.error(
+            'Error detecting visual selection:',
+            error instanceof Error ? error.message : String(error),
+          )
         }
       } catch (error) {
         nvimInfo.current_buffer = `(error: ${error instanceof Error ? error.message : String(error)})`
       } finally {
-        // Clean up
-        socket.end()
+        // Clean up all pending timeouts
+        for (const timeout of timeouts.values()) {
+          clearTimeout(timeout)
+        }
+        timeouts.clear()
+        pendingRequests.clear()
+
+        // Clean up - destroy immediately to avoid lingering connections
+        socket.destroy()
       }
     } catch (error) {
       nvimInfo.current_buffer = `(connection failed: ${error instanceof Error ? error.message : String(error)})`

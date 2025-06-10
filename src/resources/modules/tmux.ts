@@ -9,17 +9,15 @@ async function getInfo(): Promise<string> {
     throw new Error('tmux is not installed or not accessible')
   }
 
-  const tmuxEnv = process.env.TMUX
-  if (!tmuxEnv) {
-    throw new Error('Not running inside a tmux session')
-  }
-
   const info: any = {}
 
-  const [socketPath, sessionId, windowPaneId] = tmuxEnv.split(',')
-  info.socket_path = socketPath
-  info.session_id = sessionId
-  info.window_pane_id = windowPaneId
+  const tmuxEnv = process.env.TMUX
+  if (tmuxEnv) {
+    const [socketPath, sessionId, windowPaneId] = tmuxEnv.split(',')
+    info.socket_path = socketPath
+    info.session_id = sessionId
+    info.window_pane_id = windowPaneId
+  }
 
   try {
     info.tmux_version = execSync('tmux -V', { encoding: 'utf8' }).trim()
