@@ -1,6 +1,8 @@
 import { Command } from 'commander'
 import { execSync } from 'child_process'
 import yaml from 'js-yaml'
+import * as net from 'net'
+import { encode, decode } from '@msgpack/msgpack'
 
 async function getInfo(): Promise<string> {
   const tmuxEnv = process.env.TMUX
@@ -113,11 +115,134 @@ async function getInfo(): Promise<string> {
     )
   }
 
-  const nvimInfo = {
-    command: nvimProcesses[0].command,
-    pane_id: nvimProcesses[0].pane_id,
-    pid: nvimProcesses[0].pid,
-    working_directory: nvimProcesses[0].working_directory,
+  const nvimProcess = nvimProcesses[0]
+  const nvimInfo: {
+    command: string
+    pane_id: string
+    pid: number
+    working_directory: string
+    socket?: string
+    current_buffer?: string
+  } = {
+    command: nvimProcess.command,
+    pane_id: nvimProcess.pane_id,
+    pid: nvimProcess.pid,
+    working_directory: nvimProcess.working_directory,
+  }
+
+  // Parse --listen argument from command
+  const listenMatch = nvimProcess.command.match(/--listen\s+([^\s]+)/)
+  if (listenMatch && listenMatch[1]) {
+    const socketPath = listenMatch[1]
+    nvimInfo.socket = socketPath
+
+    // Try to connect to Neovim and get current buffer
+    try {
+      const socket = new net.Socket()
+
+      await new Promise<void>((resolve, reject) => {
+        const timeout = setTimeout(() => {
+          socket.destroy()
+          reject(new Error('Connection timeout'))
+        }, 2000)
+
+        socket.on('connect', () => {
+          clearTimeout(timeout)
+          resolve()
+        })
+        socket.on('error', err => {
+          clearTimeout(timeout)
+          reject(err)
+        })
+        socket.connect(socketPath)
+      })
+
+      // Simple msgpack-rpc implementation
+      let msgId = 0
+      const pendingRequests = new Map<
+        number,
+        {
+          resolve: (value: any) => void
+          reject: (error: Error) => void
+        }
+      >()
+      let buffer = Buffer.alloc(0)
+
+      // Handle incoming data
+      socket.on('data', chunk => {
+        buffer = Buffer.concat([buffer, chunk])
+
+        // Try to decode messages
+        while (buffer.length > 0) {
+          try {
+            const msg = decode(buffer) as any
+
+            // Calculate consumed bytes
+            const consumed = encode(msg).length
+            buffer = buffer.slice(consumed)
+
+            // msgpack-rpc format: [type, msgid, error, result]
+            if (Array.isArray(msg) && msg[0] === 1) {
+              // Response
+              const [, responseId, error, result] = msg
+              const handler = pendingRequests.get(responseId)
+              if (handler) {
+                pendingRequests.delete(responseId)
+                if (error) {
+                  handler.reject(new Error(error))
+                } else {
+                  handler.resolve(result)
+                }
+              }
+            }
+          } catch (e) {
+            // Not enough data yet, wait for more
+            break
+          }
+        }
+      })
+
+      // Send request helper
+      const sendRequest = (method: string, args: any[]): Promise<any> => {
+        return new Promise((resolve, reject) => {
+          const id = msgId++
+          pendingRequests.set(id, { resolve, reject })
+
+          // msgpack-rpc request format: [type=0, msgid, method, params]
+          const request = [0, id, method, args]
+          const encoded = encode(request)
+          socket.write(Buffer.from(encoded))
+
+          // Timeout after 1 second
+          setTimeout(() => {
+            if (pendingRequests.has(id)) {
+              pendingRequests.delete(id)
+              reject(new Error('Request timeout'))
+            }
+          }, 1000)
+        })
+      }
+
+      try {
+        // Wait a bit for connection to stabilize
+        await new Promise(resolve => setTimeout(resolve, 50))
+
+        // Get current buffer
+        const bufferId = await sendRequest('nvim_get_current_buf', [])
+
+        // Get buffer name
+        const bufferName = await sendRequest('nvim_buf_get_name', [bufferId])
+
+        nvimInfo.current_buffer = bufferName || '(unnamed)'
+      } catch (error) {
+        nvimInfo.current_buffer = `(error: ${error.message})`
+      } finally {
+        // Clean up
+        socket.end()
+      }
+    } catch (error) {
+      nvimInfo.current_buffer = '(connection failed)'
+    }
   }
 
   return yaml.dump(nvimInfo, { indent: 2, lineWidth: -1 })
