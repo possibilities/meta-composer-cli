@@ -1,18 +1,18 @@
 import { createProgram } from './cli/parser.js'
 import { registry } from './resources/index.js'
-import { ShadcnResource } from './resources/modules/shadcn.js'
-import { OpenAPIResource } from './resources/modules/openapi.js'
-import { IconsResource } from './resources/modules/icons.js'
-import { NvimResource } from './resources/modules/nvim.js'
-import { TmuxResource } from './resources/modules/tmux.js'
+import { shadcnModule } from './resources/modules/shadcn.js'
+import { openAPIModule } from './resources/modules/openapi.js'
+import { lucidModule } from './resources/modules/icons.js'
+import { nvimModule } from './resources/modules/nvim.js'
+import { tmuxModule } from './resources/modules/tmux.js'
 
 export async function main() {
   // Register available resources
-  registry.register(new ShadcnResource())
-  registry.register(new OpenAPIResource())
-  registry.register(new IconsResource())
-  registry.register(new NvimResource())
-  registry.register(new TmuxResource())
+  registry.register(shadcnModule)
+  registry.register(openAPIModule)
+  registry.register(lucidModule)
+  registry.register(nvimModule)
+  registry.register(tmuxModule)
 
   const program = createProgram()
 

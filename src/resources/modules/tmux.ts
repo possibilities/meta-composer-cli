@@ -1,47 +1,28 @@
-import { BaseResourceModule, CommandInfo } from '../base.js'
 import { Command } from 'commander'
 
-export class TmuxResource extends BaseResourceModule {
-  constructor() {
-    super('tmux')
-  }
+async function getInfo(): Promise<string> {
+  throw new Error('Not implemented')
+}
 
-  async list(): Promise<string> {
-    throw new Error('Not implemented')
-  }
+export function registerTmuxCommands(program: Command): void {
+  const tmuxCmd = program.command('tmux').description('tmux information')
 
-  async show(): Promise<string> {
-    throw new Error('Not implemented')
-  }
+  tmuxCmd
+    .command('get-info')
+    .description('Get tmux configuration and session information')
+    .allowExcessArguments(false)
+    .action(async () => {
+      try {
+        const result = await getInfo()
+        console.log(result)
+      } catch (error) {
+        console.error('Error getting tmux info:', error)
+        process.exit(1)
+      }
+    })
+}
 
-  async getInfo(): Promise<string> {
-    throw new Error('Not implemented')
-  }
-
-  registerCommands(program: Command): void {
-    const tmuxCmd = program.command(this.name).description('tmux information')
-
-    tmuxCmd
-      .command('get-info')
-      .description('Get tmux configuration and session information')
-      .allowExcessArguments(false)
-      .action(async () => {
-        try {
-          const result = await this.getInfo()
-          console.log(result)
-        } catch (error) {
-          console.error(`Error getting ${this.name} info:`, error)
-          process.exit(1)
-        }
-      })
-  }
-
-  getCommandInfo(): CommandInfo[] {
-    return [
-      {
-        name: 'get-info',
-        description: 'Get tmux configuration and session information',
-      },
-    ]
-  }
+export const tmuxModule = {
+  name: 'tmux',
+  registerCommands: registerTmuxCommands,
 }

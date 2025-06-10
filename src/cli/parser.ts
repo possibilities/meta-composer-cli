@@ -1,6 +1,5 @@
 import { Command } from 'commander'
-import { registry } from '../resources/index.js'
-import packageJson from '../../package.json' assert { type: 'json' }
+import packageJson from '../../package.json'
 
 export function createProgram(): Command {
   const program = new Command()
@@ -17,7 +16,7 @@ export function createProgram(): Command {
       const itemIndentWidth = 2
       const itemSeparatorWidth = 2
 
-      function formatItem(term, description) {
+      function formatItem(term: string, description: string) {
         if (description) {
           const fullText = `${term.padEnd(termWidth + itemSeparatorWidth)}${description}`
           return helper.wrap(
@@ -29,7 +28,7 @@ export function createProgram(): Command {
         return term
       }
 
-      function formatList(textArray) {
+      function formatList(textArray: string[]) {
         return textArray.join('\n').replace(/^/gm, ' '.repeat(itemIndentWidth))
       }
 
@@ -61,38 +60,6 @@ export function createProgram(): Command {
       })
       if (commandList.length) {
         output.push('Commands:\n' + formatList(commandList) + '\n')
-      }
-
-      if (cmd.name() === 'meta-composer') {
-        const modules = registry.list()
-        for (const moduleName of modules) {
-          const module = registry.get(moduleName)
-          if (module) {
-            const commands = module.getCommandInfo()
-            if (commands.length > 0) {
-              output.push(`Subcommands for ${moduleName}:\n`)
-
-              const subcommandTerms = commands.map(cmd => {
-                const baseCmd = `meta-composer ${moduleName} ${cmd.name}`
-                return cmd.arguments
-                  ? `${baseCmd} ${cmd.arguments.join(' ')}`
-                  : baseCmd
-              })
-              const maxSubcommandWidth = Math.max(
-                ...subcommandTerms.map(term => term.length),
-              )
-
-              const subcommandList = commands.map((cmd, index) => {
-                const cmdName = subcommandTerms[index]
-                const padding = ' '.repeat(
-                  Math.max(0, maxSubcommandWidth - cmdName.length),
-                )
-                return `  ${cmdName}${padding}  ${cmd.description}`
-              })
-              output.push(subcommandList.join('\n') + '\n')
-            }
-          }
-        }
       }
 
       return output.join('\n')
