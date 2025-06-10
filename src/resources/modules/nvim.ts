@@ -2,7 +2,7 @@ import { Command } from 'commander'
 import { execSync } from 'child_process'
 import yaml from 'js-yaml'
 import * as net from 'net'
-import { encode, decode } from '@msgpack/msgpack'
+import { encode, decode, Decoder } from '@msgpack/msgpack'
 
 async function getInfo(): Promise<string> {
   const nvimProcesses: Array<{
@@ -147,7 +147,7 @@ async function getInfo(): Promise<string> {
       await new Promise<void>((resolve, reject) => {
         const timeout = setTimeout(() => {
           socket.destroy()
-          reject(new Error('Connection timeout'))
+          reject(new Error(`Connection timeout to socket: ${socketPath}`))
         }, 2000)
 
         socket.on('connect', () => {
@@ -156,7 +156,7 @@ async function getInfo(): Promise<string> {
         })
         socket.on('error', err => {
           clearTimeout(timeout)
-          reject(err)
+          reject(new Error(`Socket connection error: ${err.message}`))
         })
         socket.connect(socketPath)
       })
@@ -170,38 +170,27 @@ async function getInfo(): Promise<string> {
           reject: (error: Error) => void
         }
       >()
-      let buffer = Buffer.alloc(0)
+
+      // Create a decoder for streaming msgpack data
+      const decoder = new Decoder()
 
       // Handle incoming data
       socket.on('data', chunk => {
-        buffer = Buffer.concat([buffer, chunk])
-
-        // Try to decode messages
-        while (buffer.length > 0) {
-          try {
-            const msg = decode(buffer) as any
-
-            // Calculate consumed bytes
-            const consumed = encode(msg).length
-            buffer = buffer.slice(consumed)
-
-            // msgpack-rpc format: [type, msgid, error, result]
-            if (Array.isArray(msg) && msg[0] === 1) {
-              // Response
-              const [, responseId, error, result] = msg
-              const handler = pendingRequests.get(responseId)
-              if (handler) {
-                pendingRequests.delete(responseId)
-                if (error) {
-                  handler.reject(new Error(error))
-                } else {
-                  handler.resolve(result)
-                }
+        // Feed the chunk to the decoder
+        for (const msg of decoder.decodeMulti(chunk)) {
+          // msgpack-rpc format: [type, msgid, error, result]
+          if (Array.isArray(msg) && msg[0] === 1) {
+            // Response
+            const [, responseId, error, result] = msg
+            const handler = pendingRequests.get(responseId)
+            if (handler) {
+              pendingRequests.delete(responseId)
+              if (error) {
+                handler.reject(new Error(error))
+              } else {
+                handler.resolve(result)
               }
             }
-          } catch (e) {
-            // Not enough data yet, wait for more
-            break
           }
         }
       })
@@ -217,13 +206,13 @@ async function getInfo(): Promise<string> {
           const encoded = encode(request)
           socket.write(Buffer.from(encoded))
 
-          // Timeout after 1 second
+          // Timeout after 3 seconds
           setTimeout(() => {
             if (pendingRequests.has(id)) {
               pendingRequests.delete(id)
-              reject(new Error('Request timeout'))
+              reject(new Error(`Request timeout for method: ${method}`))
             }
-          }, 1000)
+          }, 3000)
         })
       }
 
@@ -369,13 +358,13 @@ async function getInfo(): Promise<string> {
           // Ignore selection errors - might not have a selection
         }
       } catch (error) {
-        nvimInfo.current_buffer = `(error: ${error.message})`
+        nvimInfo.current_buffer = `(error: ${error instanceof Error ? error.message : String(error)})`
       } finally {
         // Clean up
         socket.end()
       }
     } catch (error) {
-      nvimInfo.current_buffer = '(connection failed)'
+      nvimInfo.current_buffer = `(connection failed: ${error instanceof Error ? error.message : String(error)})`
     }
   }
 
