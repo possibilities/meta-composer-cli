@@ -3,6 +3,7 @@ import { Command } from 'commander'
 export interface Module {
   name: string
   registerCommands: (program: Command) => void
+  instructions?: string
 }
 
 export class ResourceRegistry {
