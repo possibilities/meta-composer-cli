@@ -5,11 +5,6 @@ import * as net from 'net'
 import { encode, decode } from '@msgpack/msgpack'
 
 async function getInfo(): Promise<string> {
-  const tmuxEnv = process.env.TMUX
-  if (!tmuxEnv) {
-    throw new Error('Not running inside a tmux session')
-  }
-
   const nvimProcesses: Array<{
     pane_id: string
     pid: number
