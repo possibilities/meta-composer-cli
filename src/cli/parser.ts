@@ -20,11 +20,7 @@ export function createProgram(): Command {
       function formatItem(term: string, description: string) {
         if (description) {
           const fullText = `${term.padEnd(termWidth + itemSeparatorWidth)}${description}`
-          return helper.wrap(
-            fullText,
-            helpWidth - itemIndentWidth,
-            termWidth + itemSeparatorWidth,
-          )
+          return fullText
         }
         return term
       }
