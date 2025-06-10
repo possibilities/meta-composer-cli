@@ -13,42 +13,6 @@ This tool leverages those two ideas to give Claude Code, and similar agents, a w
 
 ## Usage
 
-The recommended way to use this tool is to create prompts with instructions for an agent about when and how to start using the CLI tools included. Running any of the subcommands with a --help flag also provides good high level information to the agent so it is also recommended to include the output in the prompt, or otherwise part of the context, for your agent.
+The recommended way to use this tool is to give the results of the `help` subcommands to an AI agent and leave it to the agent to use it correctly in it's workflow. These help subcommands are written with AI agents in mind explaining how the commands can work together to provide context and/or functionality to the agent.
 
-```
-▶ meta-composer --help
-Usage: meta-composer [options] [command]
-
-A tool for composing and traversing arbitrary information
-
-Options:
-  -V, --version   output the version number
-  -h, --help      display help for command
-
-Commands:
-  shadcn          shadcn/ui components
-  openapi         OpenAPI specifications
-  lucid           Lucide icons
-  help [command]  display help for command
-
-Subcommands for shadcn:
-
-  meta-composer shadcn list-components               List all shadcn/ui components
-  meta-composer shadcn get-component-by-name <name>  Get details for a specific shadcn/ui component by name
-  meta-composer shadcn read-about-typography         The documentation page for shadcn/ui typography
-  meta-composer shadcn read-about-theming            The documentation page for shadcn/ui theming
-
-Subcommands for openapi:
-
-  meta-composer openapi list-operations <uri>                     List all API operations from the specified OpenAPI URI
-  meta-composer openapi get-operation-by-id <uri> <operation-id>  Get details for a specific API operation by operation ID
-
-Subcommands for lucid:
-
-  meta-composer lucid list-icons                          List all Lucide icons
-  meta-composer lucid list-icon-categories                List all Lucide icon categories
-  meta-composer lucid list-icon-tags                      List all Lucide icon tags
-  meta-composer lucid list-icons-for-category <category>  List all Lucide icons that belong to a specific category
-  meta-composer lucid list-icons-for-tag <tag>            List all Lucide icons that have a specific tag
-  meta-composer lucid read-about-react-usage              The documentation page for lucid icon usage in React
-```
+Run `context-composer --help` to get a list of possible commands
