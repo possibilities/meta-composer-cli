@@ -27,8 +27,8 @@ export default defineConfig({
     options.format = 'esm'
   },
   onSuccess: async () => {
-    // Copy meta.yaml to dist directory
-    copyFileSync('meta.yaml', join('dist', 'meta.yaml'))
-    console.log('Copied meta.yaml to dist/')
+    // Copy src/meta.yaml to dist directory
+    copyFileSync(join('src', 'meta.yaml'), join('dist', 'meta.yaml'))
+    console.log('Copied src/meta.yaml to dist/')
   },
 })

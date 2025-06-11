@@ -23,12 +23,9 @@ export function loadMetadata(): Metadata {
   const __filename = fileURLToPath(import.meta.url)
   const __dirname = dirname(__filename)
 
-  // Try multiple paths to find meta.yaml
   const possiblePaths = [
-    // Production: in the same directory as the bundled JS
     join(__dirname, 'meta.yaml'),
-    // Development: at the project root
-    join(__dirname, '..', '..', 'meta.yaml'),
+    join(__dirname, '..', '..', 'src', 'meta.yaml'),
   ]
 
   let content: string | undefined
@@ -43,7 +40,7 @@ export function loadMetadata(): Metadata {
   }
 
   if (!content) {
-    throw new Error('meta.yaml not found in any expected location')
+    throw new Error('src/meta.yaml not found in any expected location')
   }
 
   metadataCache = yaml.load(content) as Metadata
@@ -55,7 +52,7 @@ export function getCommandMetadata(commandName: string): CommandMetadata {
   const metadata = loadMetadata()
 
   if (!metadata[commandName]) {
-    throw new Error(`Command "${commandName}" not found in meta.yaml`)
+    throw new Error(`Command "${commandName}" not found in src/meta.yaml`)
   }
 
   return metadata[commandName]
@@ -69,7 +66,7 @@ export function getSubcommandDescription(
 
   if (!commandMetadata.commands[subcommandName]) {
     throw new Error(
-      `Subcommand "${subcommandName}" not found for command "${commandName}" in meta.yaml`,
+      `Subcommand "${subcommandName}" not found for command "${commandName}" in src/meta.yaml`,
     )
   }
 
