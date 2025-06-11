@@ -10,7 +10,7 @@
   },
   "scripts": {
     "build": "tsup",
-    "build:watch": "nodemon --verbose --watch src/ --ext ts,yaml --exec tsup",
+    "build:watch": "nodemon --watch src/ --ext ts,yaml --exec tsup",
     "format": "prettier --write \"**/*.{js,mjs,jsx,ts,tsx,json,md,mdx,css,yml,yaml}\""
   },
   "dependencies": {
