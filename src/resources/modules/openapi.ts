@@ -1,5 +1,9 @@
 import { Command } from 'commander'
 import * as yaml from 'js-yaml'
+import {
+  getCommandMetadata,
+  getSubcommandDescription,
+} from '../metadata-loader'
 
 interface OpenAPIOperation {
   operationId?: string
@@ -228,13 +232,15 @@ export async function getOperationById(
 }
 
 export function registerOpenAPICommands(program: Command): void {
+  const metadata = getCommandMetadata('openapi')
+
   const openapiCmd = program
     .command('openapi')
-    .description('OpenAPI specifications')
+    .description(metadata.description)
 
   openapiCmd
     .command('list-operations <uri>')
-    .description('List of every operation with minimal metadata for each')
+    .description(getSubcommandDescription('openapi', 'list-operations'))
     .allowExcessArguments(false)
     .action(async (uri: string) => {
       try {
@@ -248,7 +254,7 @@ export function registerOpenAPICommands(program: Command): void {
 
   openapiCmd
     .command('get-operation-by-id <uri> <operation-id>')
-    .description('Get detailed information for an operation by its ID')
+    .description(getSubcommandDescription('openapi', 'get-operation-by-id'))
     .allowExcessArguments(false)
     .action(async (uri: string, operationId: string) => {
       try {
@@ -264,5 +270,5 @@ export function registerOpenAPICommands(program: Command): void {
 export const openAPIModule = {
   name: 'openapi',
   registerCommands: registerOpenAPICommands,
-  instructions: `The following commands expose all OpenAPI specification information`,
+  instructions: getCommandMetadata('openapi').instructions,
 }

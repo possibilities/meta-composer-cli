@@ -1,4 +1,5 @@
 import { Command } from 'commander'
+import { validateCommand } from './metadata-loader'
 
 export interface Module {
   name: string
@@ -13,6 +14,9 @@ export class ResourceRegistry {
     if (this.resources.has(resource.name)) {
       throw new Error(`Resource "${resource.name}" is already registered`)
     }
+
+    validateCommand(resource.name)
+
     this.resources.set(resource.name, resource)
   }
 
