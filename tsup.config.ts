@@ -20,5 +20,8 @@ export default defineConfig({
     options.banner = {
       js: '#!/usr/bin/env node',
     }
+    // Ensure proper module resolution
+    options.platform = 'node'
+    options.format = 'esm'
   },
 })

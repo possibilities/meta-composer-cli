@@ -1,10 +1,12 @@
-import { createProgram } from './cli/parser.js'
-import { registry } from './resources/index.js'
-import { shadcnModule } from './resources/modules/shadcn.js'
-import { openAPIModule } from './resources/modules/openapi.js'
-import { lucidModule } from './resources/modules/icons.js'
-import { nvimModule } from './resources/modules/nvim.js'
-import { tmuxModule } from './resources/modules/tmux.js'
+import { createProgram } from './cli/parser'
+import {
+  registry,
+  shadcnModule,
+  openAPIModule,
+  lucidModule,
+  nvimModule,
+  tmuxModule,
+} from './resources/index'
 
 export async function main() {
   // Register available resources
