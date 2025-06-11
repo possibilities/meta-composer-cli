@@ -40,7 +40,7 @@ export function createProgram(): Command {
 
       // For subcommands with instructions, show them before commands
       if (module && module.instructions) {
-        output.push(module.instructions + '\n')
+        output.push(module.instructions)
       } else {
         // Only show description for non-module commands
         const description = helper.commandDescription(cmd)
