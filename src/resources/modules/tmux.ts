@@ -1,4 +1,5 @@
 import { Command } from 'commander'
+import dedent from 'dedent'
 import { execSync } from 'child_process'
 import yaml from 'js-yaml'
 
@@ -256,12 +257,14 @@ export function registerTmuxCommands(program: Command): void {
 export const tmuxModule = {
   name: 'tmux',
   registerCommands: registerTmuxCommands,
-  instructions: `Tmux integration for meta-composer
-The following commands interact with tmux sessions:
+  instructions: dedent`
+    Tmux integration for meta-composer
+    The following commands interact with tmux sessions:
 
-- Detects if running inside a tmux session and provides context
-- Lists all active tmux sessions with window and pane information
-- Shows detailed information about the current pane including running processes
-- Captures full command lines and working directories for each pane
-- Useful for understanding and integrating tmux workspace context`,
+    - Detects if running inside a tmux session and provides context
+    - Lists all active tmux sessions with window and pane information
+    - Shows detailed information about the current pane including running processes
+    - Captures full command lines and working directories for each pane
+    - Useful for understanding and integrating tmux workspace context
+  `,
 }

@@ -1,4 +1,5 @@
 import { execSync } from 'child_process'
+import dedent from 'dedent'
 import {
   existsSync,
   mkdirSync,
@@ -310,9 +311,11 @@ export function registerLucidCommands(program: Command): void {
 export const lucidModule = {
   name: 'lucid',
   registerCommands: registerLucidCommands,
-  instructions: `Lucid icon library is a large, high quality icon collection for react
-The following commands find information about available icons in addition to installing and using them:
+  instructions: dedent`
+    Lucid icon library is a large, high quality icon collection for react
+    The following commands find information about available icons in addition to installing and using them:
 
-Instructions:
-- When creating components that need icons use one or more of the various list methods to find a set of initial choices that can then be narrowed down`,
+    Instructions:
+    - When creating components that need icons use one or more of the various list methods to find a set of initial choices that can then be narrowed down
+  `,
 }

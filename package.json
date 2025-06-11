@@ -10,18 +10,20 @@
   },
   "scripts": {
     "build": "tsup",
-    "build:watch": "tsup --watch",
+    "build:watch": "nodemon --watch src --ext ts --exec tsup",
     "format": "prettier --write \"**/*.{js,mjs,jsx,ts,tsx,json,md,mdx,css,yml,yaml}\""
   },
   "dependencies": {
     "@msgpack/msgpack": "^3.1.2",
     "commander": "^12.0.0",
+    "dedent": "^1.6.0",
     "js-yaml": "^4.1.0",
     "zod": "^3.25.56"
   },
   "devDependencies": {
     "@types/js-yaml": "^4.0.9",
     "@types/node": "^20.0.0",
+    "nodemon": "^3.1.10",
     "prettier": "^3.5.3",
     "tsup": "^8.0.0",
     "typescript": "^5.0.0"

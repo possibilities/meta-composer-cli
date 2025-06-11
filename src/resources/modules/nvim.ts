@@ -1,4 +1,5 @@
 import { Command } from 'commander'
+import dedent from 'dedent'
 import { execSync } from 'child_process'
 import yaml from 'js-yaml'
 import * as net from 'net'
@@ -425,10 +426,12 @@ export function registerNvimCommands(program: Command): void {
 export const nvimModule = {
   name: 'nvim',
   registerCommands: registerNvimCommands,
-  instructions: `Neovim integration for meta-composer
-The following commands interact with Neovim instances:
+  instructions: dedent`
+    Neovim integration for meta-composer
+    The following commands interact with Neovim instances:
 
-Instructions:
-- Provides details about the current file, cursor position, and visual selections
-- Use this command any time I ask about my editor, vim, or nvim`,
+    Instructions:
+    - Provides details about the current file, cursor position, and visual selections
+    - Use this command any time I ask about my editor, vim, or nvim
+  `,
 }

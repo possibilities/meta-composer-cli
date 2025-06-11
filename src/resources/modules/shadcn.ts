@@ -1,3 +1,4 @@
+import dedent from 'dedent'
 import { execSync } from 'child_process'
 import {
   existsSync,
@@ -536,14 +537,15 @@ export function registerShadcnCommands(program: Command): void {
 export const shadcnModule = {
   name: 'shadcn',
   registerCommands: registerShadcnCommands,
-  instructions: `
-Shadcn/ui component library for React is a high quality, themable, components and blocks for building beautiful UIs with a great UX
-The following commands find information about available components in addition to installing and using them:
+  instructions: dedent`
+    Shadcn/ui component library for React is a high quality, themable, components and blocks for building beautiful UIs with a great UX
+    The following commands find information about available components in addition to installing and using them:
 
-Recommended: Call list-components, read-about-typography, and read-about-theming right away, then use get-component-by-name to get the documentation for specfic components
+    Recommended: Call list-components, read-about-typography, and read-about-theming right away, then use get-component-by-name to get the documentation for specfic components
 
-When using and creating components, use theme variables that shadcn exposes rather than adding our own styles
-Select from the library components rather than writing your own
-Build up more complicated components from existing components, blocks, and examples
-Use the installation instructions found in each components' documentation to add it to the project`,
+    When using and creating components, use theme variables that shadcn exposes rather than adding our own styles
+    Select from the library components rather than writing your own
+    Build up more complicated components from existing components, blocks, and examples
+    Use the installation instructions found in each components' documentation to add it to the project
+  `,
 }
