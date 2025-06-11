@@ -4,6 +4,10 @@ import { execSync } from 'child_process'
 import yaml from 'js-yaml'
 import * as net from 'net'
 import { encode, decode, Decoder } from '@msgpack/msgpack'
+import {
+  getCommandMetadata,
+  getSubcommandDescription,
+} from '../metadata-loader'
 
 async function getInfo(): Promise<string> {
   const nvimProcesses: Array<{
@@ -404,13 +408,13 @@ async function getInfo(): Promise<string> {
 }
 
 export function registerNvimCommands(program: Command): void {
-  const nvimCmd = program.command('nvim').description('Neovim information')
+  const metadata = getCommandMetadata('nvim')
+
+  const nvimCmd = program.command('nvim').description(metadata.description)
 
   nvimCmd
     .command('get-info')
-    .description(
-      'Retrieve configuration and plugin information from running Neovim instances',
-    )
+    .description(getSubcommandDescription('nvim', 'get-info'))
     .allowExcessArguments(false)
     .action(async () => {
       try {
@@ -426,12 +430,5 @@ export function registerNvimCommands(program: Command): void {
 export const nvimModule = {
   name: 'nvim',
   registerCommands: registerNvimCommands,
-  instructions: dedent`
-    Neovim integration for meta-composer
-    The following commands interact with Neovim instances:
-
-    Instructions:
-    - Provides details about the current file, cursor position, and visual selections
-    - Use this command any time I ask about my editor, vim, or nvim
-  `,
+  instructions: getCommandMetadata('nvim').instructions,
 }

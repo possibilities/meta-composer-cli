@@ -11,6 +11,10 @@ import { join } from 'path'
 import { homedir } from 'os'
 import * as yaml from 'js-yaml'
 import { Command } from 'commander'
+import {
+  getCommandMetadata,
+  getSubcommandDescription,
+} from '../metadata-loader'
 
 interface ShadcnComponent {
   id: string
@@ -467,15 +471,13 @@ export async function readAboutTheming(): Promise<string> {
 }
 
 export function registerShadcnCommands(program: Command): void {
-  const shadcnCmd = program
-    .command('shadcn')
-    .description('shadcn/ui components')
+  const metadata = getCommandMetadata('shadcn')
+
+  const shadcnCmd = program.command('shadcn').description(metadata.description)
 
   shadcnCmd
     .command('list-components')
-    .description(
-      'Full list of names and descriptions of every component in the library',
-    )
+    .description(getSubcommandDescription('shadcn', 'list-components'))
     .allowExcessArguments(false)
     .action(async () => {
       try {
@@ -489,9 +491,7 @@ export function registerShadcnCommands(program: Command): void {
 
   shadcnCmd
     .command('get-component-by-name <name>')
-    .description(
-      'Fetch full documentation, usage, examples, and installation instructions by name',
-    )
+    .description(getSubcommandDescription('shadcn', 'get-component-by-name'))
     .allowExcessArguments(false)
     .action(async (name: string) => {
       try {
@@ -505,7 +505,7 @@ export function registerShadcnCommands(program: Command): void {
 
   shadcnCmd
     .command('read-about-typography')
-    .description('Read about using typography')
+    .description(getSubcommandDescription('shadcn', 'read-about-typography'))
     .allowExcessArguments(false)
     .action(async () => {
       try {
@@ -519,9 +519,7 @@ export function registerShadcnCommands(program: Command): void {
 
   shadcnCmd
     .command('read-about-theming')
-    .description(
-      'Read about theming and for a full list of variables that are available',
-    )
+    .description(getSubcommandDescription('shadcn', 'read-about-theming'))
     .allowExcessArguments(false)
     .action(async () => {
       try {
@@ -537,15 +535,5 @@ export function registerShadcnCommands(program: Command): void {
 export const shadcnModule = {
   name: 'shadcn',
   registerCommands: registerShadcnCommands,
-  instructions: dedent`
-    Shadcn/ui component library for React is a high quality, themable, components and blocks for building beautiful UIs with a great UX
-    The following commands find information about available components in addition to installing and using them:
-
-    Recommended: Call list-components, read-about-typography, and read-about-theming right away, then use get-component-by-name to get the documentation for specfic components
-
-    When using and creating components, use theme variables that shadcn exposes rather than adding our own styles
-    Select from the library components rather than writing your own
-    Build up more complicated components from existing components, blocks, and examples
-    Use the installation instructions found in each components' documentation to add it to the project
-  `,
+  instructions: getCommandMetadata('shadcn').instructions,
 }

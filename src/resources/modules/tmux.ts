@@ -2,6 +2,10 @@ import { Command } from 'commander'
 import dedent from 'dedent'
 import { execSync } from 'child_process'
 import yaml from 'js-yaml'
+import {
+  getCommandMetadata,
+  getSubcommandDescription,
+} from '../metadata-loader'
 
 async function getInfo(): Promise<string> {
   try {
@@ -237,11 +241,13 @@ async function getInfo(): Promise<string> {
 }
 
 export function registerTmuxCommands(program: Command): void {
-  const tmuxCmd = program.command('tmux').description('tmux information')
+  const metadata = getCommandMetadata('tmux')
+
+  const tmuxCmd = program.command('tmux').description(metadata.description)
 
   tmuxCmd
     .command('get-info')
-    .description('Retrieve configuration and session information from tmux')
+    .description(getSubcommandDescription('tmux', 'get-info'))
     .allowExcessArguments(false)
     .action(async () => {
       try {
@@ -257,7 +263,5 @@ export function registerTmuxCommands(program: Command): void {
 export const tmuxModule = {
   name: 'tmux',
   registerCommands: registerTmuxCommands,
-  instructions: dedent`
-    Get information about the current tmux session, including details about panes and windows
-  `,
+  instructions: getCommandMetadata('tmux').instructions,
 }
