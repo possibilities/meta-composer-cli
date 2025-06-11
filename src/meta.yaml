@@ -1,56 +1,62 @@
 shadcn:
   description: shadcn/ui components
   instructions: |
-    Shadcn/ui component library for React is a high quality, themable, components and blocks for building beautiful UIs with a great UX
-    The following commands find information about available components in addition to installing and using them:
+    Shadcn/ui component library for React is a high quality, themable, components and blocks for building beautiful UI and great UX
 
-    Recommended: Call list-components, read-about-typography, and read-about-theming right away, then use get-component-by-name to get the documentation for specfic components
+    Usage:
+      - Call list-components, read-about-typography, and read-about-theming right away
+      - Then use get-component-by-name to get the documentation for specfic components
 
-    When using and creating components, use theme variables that shadcn exposes rather than adding our own styles
-    Select from the library components rather than writing your own
-    Build up more complicated components from existing components, blocks, and examples
-    Use the installation instructions found in each components' documentation to add it to the project
+    Tips:
+      - When using and creating components, use theme variables that shadcn exposes rather than adding our own styles
+      - Select from the library components rather than writing your own
+      - Build up more complicated components from existing components, blocks, and examples
+      - Use the installation instructions found in each components' documentation to add it to the project
   commands:
-    list-components: Full list of names and descriptions of every component in the library
-    get-component-by-name: Fetch full documentation, usage, examples, and installation instructions by name
+    list-components: Names and descriptions of every component in the library
+    get-component-by-name: Full documentation, usage, examples, and installation instructions by component name
     read-about-typography: Read about using typography
-    read-about-theming: Read about theming and for a full list of variables that are available
+    read-about-theming: Read about theming and get a full list of available variables
 lucid:
-  description: Lucide icons
+  description: Lucid icons
   instructions: |
     Lucid icon library is a large, high quality icon collection for react
-    The following commands find information about available icons in addition to installing and using them:
 
-    Instructions:
-    - When creating components that need icons use one or more of the various list methods to find a set of initial choices that can then be narrowed down
+    Usage:
+    - To choose icons use one or more of the various list methods to find a set of initial choices that can then be narrowed down
+    - When a good tag or category is found use the corresponding list-icons-for-category and list-icons-for-tag-category to get related icons
   commands:
     list-icons: Full list of every icon name. It's a large list (~8000 tokens)
     list-icon-categories: Full list of every icon category. It's a small list (~130 tokens)
     list-icon-tags: Full list of every icon tag. It's a large list (~11000 tokens)
-    list-icons-for-category: List of the icons in a category
+    list-icons-for-category: List of icons in a category
     list-icons-for-tag: List of icons that have a tag
     read-about-react-usage: Read about how to install and use icons in React
 nvim:
-  description: Neovim information
+  description: Nvim information
   instructions: |
-    Neovim integration for meta-composer
-    The following commands interact with Neovim instances:
+    Retrieve information about nvim instance running in project directory
 
-    Instructions:
-    - Provides details about the current file, cursor position, and visual selections
-    - Use this command any time I ask about my editor, vim, or nvim
+    Usage:
+    - Use this command any time I ask about my editor, vim, or nvim, e.g. "explain the text selected in my editor"
   commands:
-    get-info: Retrieve configuration and plugin information from running Neovim instances
-openapi:
-  description: OpenAPI specifications
-  instructions: |
-    The following commands expose all OpenAPI specification information
-  commands:
-    list-operations: List of every operation with minimal metadata for each
-    get-operation-by-id: Get detailed information for an operation by its ID
+    get-info: Provides details about the current file, cursor position, and visual selections in nvim
 tmux:
   description: tmux information
   instructions: |
-    Get information about the current tmux session, including details about panes and windows
+    Retrieve information about the current tmux session
+
+    Usage:
+      Use this command any time the user is asking about what processes are running and what panes are open for the current project
   commands:
-    get-info: Retrieve configuration and session information from tmux
+    get-info: Retrieve information about the tmux panes and processes in the current window
+openapi:
+  description: OpenAPI specifications
+  instructions: |
+    Retrieve information about an OpenAPI instance
+
+    Usage:
+      - Use list-operations to find relevant operations and then use the operation ID to fetch details with get-operation-by-id
+  commands:
+    list-operations: List of every operation with minimal metadata for each
+    get-operation-by-id: Get detailed information for an operation by its ID
