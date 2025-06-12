@@ -3,7 +3,7 @@ import {
   registry,
   shadcnModule,
   openAPIModule,
-  lucidModule,
+  lucideModule,
   nvimModule,
   tmuxModule,
 } from './resources/index'
@@ -12,7 +12,7 @@ export async function main() {
   // Register available resources
   registry.register(shadcnModule)
   registry.register(openAPIModule)
-  registry.register(lucidModule)
+  registry.register(lucideModule)
   registry.register(nvimModule)
   registry.register(tmuxModule)
 
