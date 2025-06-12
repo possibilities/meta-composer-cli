@@ -38,7 +38,12 @@ nvim:
     Retrieve information about nvim instance running in project directory
 
     Usage:
-    - Use this command any time I ask about my editor, vim, or nvim, e.g. "explain the text selected in my editor"
+    - Use this command any time I ask about my editor, vim, or nvim
+      - Examples:
+        - "Explain selected text in my editor"
+        - "Summarize the file I have open"
+        - "Delete the text I have selected"
+    - Rerun the command on each query because information can change frequently
   commands:
     get-info: Provides details about the current file, cursor position, and visual selections in nvim
 tmux:
@@ -47,7 +52,8 @@ tmux:
     Retrieve information about the current tmux session
 
     Usage:
-      Use this command any time the user is asking about what processes are running and what panes are open for the current project
+    - Use this command any time the user is asking about what processes are running and what panes are open for the current project
+    - Rerun the command on each query because information can change frequently
   commands:
     get-info: Retrieve information about the tmux panes and processes in the current window
 openapi:
