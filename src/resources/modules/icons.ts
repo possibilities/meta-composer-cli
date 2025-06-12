@@ -31,7 +31,7 @@ const cacheDir = join(
   'cache',
   'resources',
   'icons',
-  'lucid',
+  'lucide',
 )
 const repoDir = join(cacheDir, 'lucide-icons-repo')
 const metadataDir = join(cacheDir, 'lucide-icons-metadata')
@@ -63,11 +63,11 @@ function processLucideIcons(): void {
   const lucideIconsDir = join(repoDir, 'icons')
 
   if (existsSync(metadataDir) && existsSync(join(metadataDir, 'icons.yaml'))) {
-    console.log(`Lucide icons metadata already exists at ${metadataDir}`)
+    console.log(`Icons metadata already exists at ${metadataDir}`)
     return
   }
 
-  console.log(`Processing Lucide icons to ${metadataDir}...`)
+  console.log(`Processing icons to ${metadataDir}...`)
   mkdirSync(metadataDir, { recursive: true })
 
   const iconsMetadata: IconMetadata[] = []
@@ -102,7 +102,7 @@ function processLucideIcons(): void {
   const outputPath = join(metadataDir, 'icons.yaml')
   writeFileSync(outputPath, yaml.dump(iconsMetadata, { sortKeys: false }))
 
-  console.log(`Processed ${iconsMetadata.length} Lucide icons`)
+  console.log(`Processed ${iconsMetadata.length} icons`)
 }
 
 function warmCache(): void {
@@ -208,14 +208,14 @@ export async function readAboutReactUsage(): Promise<string> {
   }
 }
 
-export function registerLucidCommands(program: Command): void {
-  const metadata = getCommandMetadata('lucid')
+export function registerLucideCommands(program: Command): void {
+  const metadata = getCommandMetadata('lucide')
 
-  const lucidCmd = program.command('lucid').description(metadata.description)
+  const lucideCmd = program.command('lucide').description(metadata.description)
 
-  lucidCmd
+  lucideCmd
     .command('list-icons')
-    .description(getSubcommandDescription('lucid', 'list-icons'))
+    .description(getSubcommandDescription('lucide', 'list-icons'))
     .allowExcessArguments(false)
     .action(async () => {
       try {
@@ -224,14 +224,14 @@ export function registerLucidCommands(program: Command): void {
           console.log(results)
         }
       } catch (error) {
-        console.error('Error listing lucid icons:', error)
+        console.error('Error listing icons:', error)
         process.exit(1)
       }
     })
 
-  lucidCmd
+  lucideCmd
     .command('list-icon-categories')
-    .description(getSubcommandDescription('lucid', 'list-icon-categories'))
+    .description(getSubcommandDescription('lucide', 'list-icon-categories'))
     .allowExcessArguments(false)
     .action(async () => {
       try {
@@ -240,14 +240,14 @@ export function registerLucidCommands(program: Command): void {
           console.log(results)
         }
       } catch (error) {
-        console.error('Error listing lucid icon categories:', error)
+        console.error('Error listing icon categories:', error)
         process.exit(1)
       }
     })
 
-  lucidCmd
+  lucideCmd
     .command('list-icon-tags')
-    .description(getSubcommandDescription('lucid', 'list-icon-tags'))
+    .description(getSubcommandDescription('lucide', 'list-icon-tags'))
     .allowExcessArguments(false)
     .action(async () => {
       try {
@@ -256,14 +256,14 @@ export function registerLucidCommands(program: Command): void {
           console.log(results)
         }
       } catch (error) {
-        console.error('Error listing lucid icon tags:', error)
+        console.error('Error listing icon tags:', error)
         process.exit(1)
       }
     })
 
-  lucidCmd
+  lucideCmd
     .command('list-icons-for-category <category>')
-    .description(getSubcommandDescription('lucid', 'list-icons-for-category'))
+    .description(getSubcommandDescription('lucide', 'list-icons-for-category'))
     .allowExcessArguments(false)
     .action(async (category: string) => {
       try {
@@ -272,14 +272,14 @@ export function registerLucidCommands(program: Command): void {
           console.log(result)
         }
       } catch (error) {
-        console.error('Error listing lucid icons for category:', error)
+        console.error('Error listing icons for category:', error)
         process.exit(1)
       }
     })
 
-  lucidCmd
+  lucideCmd
     .command('list-icons-for-tag <tag>')
-    .description(getSubcommandDescription('lucid', 'list-icons-for-tag'))
+    .description(getSubcommandDescription('lucide', 'list-icons-for-tag'))
     .allowExcessArguments(false)
     .action(async (tag: string) => {
       try {
@@ -288,14 +288,14 @@ export function registerLucidCommands(program: Command): void {
           console.log(result)
         }
       } catch (error) {
-        console.error('Error listing lucid icons for tag:', error)
+        console.error('Error listing icons for tag:', error)
         process.exit(1)
       }
     })
 
-  lucidCmd
+  lucideCmd
     .command('read-about-react-usage')
-    .description(getSubcommandDescription('lucid', 'read-about-react-usage'))
+    .description(getSubcommandDescription('lucide', 'read-about-react-usage'))
     .allowExcessArguments(false)
     .action(async () => {
       try {
@@ -308,8 +308,8 @@ export function registerLucidCommands(program: Command): void {
     })
 }
 
-export const lucidModule = {
-  name: 'lucid',
-  registerCommands: registerLucidCommands,
-  instructions: getCommandMetadata('lucid').instructions,
+export const lucideModule = {
+  name: 'lucide',
+  registerCommands: registerLucideCommands,
+  instructions: getCommandMetadata('lucide').instructions,
 }

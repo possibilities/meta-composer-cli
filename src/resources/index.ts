@@ -1,6 +1,6 @@
 export { Module, ResourceRegistry, registry } from './registry'
 export { openAPIModule } from './modules/openapi'
-export { lucidModule } from './modules/icons'
+export { lucideModule } from './modules/icons'
 export { nvimModule } from './modules/nvim'
 export { tmuxModule } from './modules/tmux'
 export { shadcnModule } from './modules/shadcn'

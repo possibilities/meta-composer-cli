@@ -17,10 +17,10 @@ shadcn:
     get-component-by-name: Full documentation, usage, examples, and installation instructions by component name
     read-about-typography: Read about using typography
     read-about-theming: Read about theming and get a full list of available variables
-lucid:
-  description: Lucid icons
+lucide:
+  description: Lucide icons
   instructions: |
-    Lucid icon library is a large, high quality icon collection for react
+    Lucide icon library is a large, high quality icon collection for react
 
     Usage:
     - To choose icons use one or more of the various list methods to find a set of initial choices that can then be narrowed down
