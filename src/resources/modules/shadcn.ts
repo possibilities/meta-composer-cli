@@ -1,4 +1,3 @@
-import dedent from 'dedent'
 import { execSync } from 'child_process'
 import {
   existsSync,

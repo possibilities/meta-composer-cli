@@ -1,9 +1,8 @@
 import { Command } from 'commander'
-import dedent from 'dedent'
 import { execSync } from 'child_process'
 import yaml from 'js-yaml'
 import * as net from 'net'
-import { encode, decode, Decoder } from '@msgpack/msgpack'
+import { encode, Decoder } from '@msgpack/msgpack'
 import {
   getCommandMetadata,
   getSubcommandDescription,
@@ -51,7 +50,7 @@ async function getInfo(): Promise<string> {
           for (const line of psTree) {
             const parts = line.trim().split(/\s+/)
             if (parts.length >= 3) {
-              const [procPid, parentPid, ...cmdParts] = parts
+              const [, , ...cmdParts] = parts
               const cmd = cmdParts.join(' ')
 
               if (

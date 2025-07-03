@@ -1,5 +1,4 @@
 import { execSync } from 'child_process'
-import dedent from 'dedent'
 import {
   existsSync,
   mkdirSync,

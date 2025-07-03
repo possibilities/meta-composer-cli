@@ -1,5 +1,4 @@
 import { Command } from 'commander'
-import dedent from 'dedent'
 import { execSync } from 'child_process'
 import yaml from 'js-yaml'
 import {
@@ -63,7 +62,7 @@ async function getInfo(): Promise<string> {
         for (const line of psTree) {
           const parts = line.trim().split(/\s+/)
           if (parts.length >= 3) {
-            const [procPid, parentPid, ...cmdParts] = parts
+            const [, , ...cmdParts] = parts
             const cmd = cmdParts.join(' ')
 
             // Check if this command matches the current_command
