@@ -39,7 +39,8 @@ export async function main() {
     if (
       error.code === 'commander.excessArguments' ||
       error.code === 'commander.help' ||
-      error.code === 'commander.helpDisplayed'
+      error.code === 'commander.helpDisplayed' ||
+      error.code === 'commander.version'
     ) {
       // These errors are already formatted by Commander
       process.exit(0)
