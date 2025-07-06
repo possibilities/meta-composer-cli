@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "author": "Mike Bannister <notimpossiblemike@gmail.com>",
   "license": "MIT",
-  "description": "A tool for composing and traversing arbitrary information",
+  "description": "Meta Composer CLI",
   "type": "module",
   "bin": {
     "meta-composer": "./dist/cli.js"
