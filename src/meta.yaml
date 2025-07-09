@@ -66,3 +66,14 @@ openapi:
   commands:
     list-operations: List of every operation with minimal metadata for each
     get-operation-by-id: Get detailed information for an operation by its ID
+project:
+  description: Project information
+  instructions: |
+    Retrieve comprehensive information about a Node.js project and its dependencies
+
+    Usage:
+    - Use get-info to display project metadata, scripts, and detailed dependency information
+    - Shows URLs for GitHub repositories, NPM packages, and project homepages
+    - Run from the root directory of a Node.js project (where package.json is located)
+  commands:
+    get-info: Display project information including dependencies with their descriptions and URLs

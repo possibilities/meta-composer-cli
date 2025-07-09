@@ -6,6 +6,7 @@ import {
   lucideModule,
   nvimModule,
   tmuxModule,
+  projectModule,
 } from './resources/index'
 
 export async function main() {
@@ -15,6 +16,7 @@ export async function main() {
   registry.register(lucideModule)
   registry.register(nvimModule)
   registry.register(tmuxModule)
+  registry.register(projectModule)
 
   const program = createProgram()
 
