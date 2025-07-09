@@ -21,7 +21,8 @@ async function getInfo(): Promise<string> {
   const packageJsonPath = join(projectPath, 'package.json')
 
   if (!existsSync(packageJsonPath)) {
-    throw new Error('No package.json found in current directory')
+    console.log('No dependency information found')
+    process.exit(0)
   }
 
   const packageJson: PackageJson = JSON.parse(
@@ -133,13 +134,8 @@ export function registerProjectCommands(program: Command): void {
     .description(getSubcommandDescription('project', 'get-info'))
     .allowExcessArguments(false)
     .action(async () => {
-      try {
-        const result = await getInfo()
-        console.log(result)
-      } catch (error) {
-        console.error('Error getting project info:', error)
-        process.exit(1)
-      }
+      const result = await getInfo()
+      console.log(result)
     })
 }
 
