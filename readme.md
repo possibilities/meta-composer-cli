@@ -15,4 +15,4 @@ This tool leverages those two ideas to give Claude Code, and similar agents, a w
 
 The recommended way to use this tool is to give the results of the `help` subcommands to an AI agent and leave it to the agent to use it correctly in it's workflow. These help subcommands are written with AI agents in mind explaining how the commands can work together to provide context and/or functionality to the agent.
 
-Run `context-composer --help` to get a list of possible commands
+Run `meta-composer --help` to get a list of possible commands
