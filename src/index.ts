@@ -10,7 +10,6 @@ import {
 } from './resources/index'
 
 export async function main() {
-  // Register available resources
   registry.register(shadcnModule)
   registry.register(openAPIModule)
   registry.register(lucideModule)
@@ -20,7 +19,6 @@ export async function main() {
 
   const program = createProgram()
 
-  // Register commands from all resources
   for (const resource of registry.list()) {
     const resourceModule = registry.get(resource)
     if (resourceModule) {
@@ -29,7 +27,6 @@ export async function main() {
   }
 
   try {
-    // Enable strict mode for better error handling
     program.exitOverride()
     program.configureOutput({
       writeErr: str => process.stderr.write(str),
@@ -37,14 +34,12 @@ export async function main() {
 
     await program.parseAsync(process.argv)
   } catch (error: any) {
-    // Commander throws specific errors that should exit cleanly
     if (
       error.code === 'commander.excessArguments' ||
       error.code === 'commander.help' ||
       error.code === 'commander.helpDisplayed' ||
       error.code === 'commander.version'
     ) {
-      // These errors are already formatted by Commander
       process.exit(0)
     }
     console.error('Error:', error.message || error)

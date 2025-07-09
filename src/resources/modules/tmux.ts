@@ -48,7 +48,6 @@ async function getInfo(): Promise<string> {
       let fullCommand = currentCommand
 
       try {
-        // Get the process tree to find the actual command
         const psTree = execSync(
           `ps -eo pid,ppid,args | grep -E "^\\s*(${pid}|[0-9]+\\s+${pid})" | grep -v grep`,
           {
@@ -58,14 +57,12 @@ async function getInfo(): Promise<string> {
           .trim()
           .split('\n')
 
-        // Find the process that matches the current_command
         for (const line of psTree) {
           const parts = line.trim().split(/\s+/)
           if (parts.length >= 3) {
             const [, , ...cmdParts] = parts
             const cmd = cmdParts.join(' ')
 
-            // Check if this command matches the current_command
             if (
               cmd.includes(currentCommand) &&
               !cmd.includes('zsh') &&
@@ -78,7 +75,6 @@ async function getInfo(): Promise<string> {
           }
         }
 
-        // If we still haven't found it, try to get the command for any child process
         if (fullCommand === currentCommand) {
           const children = execSync(`pgrep -P ${pid}`, { encoding: 'utf8' })
             .trim()
@@ -94,14 +90,10 @@ async function getInfo(): Promise<string> {
                 fullCommand = childCmd
                 break
               }
-            } catch {
-              // Continue to next child
-            }
+            } catch {}
           }
         }
-      } catch {
-        // Keep the basic command if we can't get the full command line
-      }
+      } catch {}
 
       return {
         id: paneId,

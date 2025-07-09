@@ -34,9 +34,7 @@ export function loadMetadata(): Metadata {
     try {
       content = readFileSync(path, 'utf-8')
       break
-    } catch {
-      // Continue to next path
-    }
+    } catch {}
   }
 
   if (!content) {

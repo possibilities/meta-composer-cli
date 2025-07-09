@@ -33,22 +33,18 @@ export function createProgram(): Command {
       const usage = helper.commandUsage(cmd)
       output.push('Usage: ' + usage + '\n')
 
-      // Check if this is a subcommand and if it has help metadata
       const commandName = cmd.name()
       const module = registry.get(commandName)
 
-      // For subcommands with instructions, show them before commands
       if (module && module.instructions) {
         output.push(module.instructions)
       } else {
-        // Only show description for non-module commands
         const description = helper.commandDescription(cmd)
         if (description) {
           output.push(description + '\n')
         }
       }
 
-      // Only show options for non-module commands
       if (!module || !module.instructions) {
         const optionList = helper.visibleOptions(cmd).map(option => {
           return formatItem(
@@ -63,7 +59,7 @@ export function createProgram(): Command {
 
       const commandList = helper
         .visibleCommands(cmd)
-        .filter(subCmd => subCmd.name() !== 'help') // Exclude help command
+        .filter(subCmd => subCmd.name() !== 'help')
         .map(cmd => {
           return formatItem(
             helper.subcommandTerm(cmd),

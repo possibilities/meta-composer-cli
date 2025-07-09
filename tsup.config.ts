@@ -22,12 +22,11 @@ export default defineConfig({
     options.banner = {
       js: '#!/usr/bin/env node',
     }
-    // Ensure proper module resolution
+
     options.platform = 'node'
     options.format = 'esm'
   },
   onSuccess: async () => {
-    // Copy src/meta.yaml to dist directory
     copyFileSync(join('src', 'meta.yaml'), join('dist', 'meta.yaml'))
     console.log('Copied src/meta.yaml to dist/')
   },
